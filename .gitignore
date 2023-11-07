@@ -1,0 +1,9 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs
+/FlowSheetAPI/bin/Debug/net7.0
+/FlowSheetAPI/.vs/FlowSheetAPI
+/FlowSheetAPI/.config/dotnet-tools.json
+/FlowSheetAPI/obj
