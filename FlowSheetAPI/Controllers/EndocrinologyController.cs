@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FlowSheetAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowSheetAPI.Controllers
@@ -7,21 +8,33 @@ namespace FlowSheetAPI.Controllers
     [ApiController]
     public class EndocronologyController : ControllerBase
     {
-        public EndocronologyController() { }
+        private readonly IEndocrinologyService _endocrinologyService;
+        public EndocronologyController(IEndocrinologyService endocrinologyService)
+        {
+            _endocrinologyService = endocrinologyService;
+        }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Get()
+        public IActionResult GetAll()
         {
             return Ok("Endocronology");
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{patientId}/GetByPatient")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Get(int id)
+        public IActionResult GetByPatient(string patientId)
         {
-            return Ok("Endocronology");
+            try
+            {
+                var endocrinology = _endocrinologyService.GetByPatient(patientId);
+                return Ok(endocrinology);
+            }
+            catch (Exception)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
         }
 
         [HttpPost]
@@ -32,19 +45,16 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{id}")]
+        [Route("{id}/Lock")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Put(int id)
+        public IActionResult Lock(Guid id)
         {
-            return Ok("Endocronology");
-        }
-
-        [HttpGet]
-        [Route("{id}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult Lock(int id)
-        {
-            return Ok("Endocronology");
+            try
+            {
+                var endocrinology = _endocrinologyService.GetByIdAsync(id);
+                return Ok(endocrinology);
+            }
+            catch (Exception) { return StatusCode(StatusCodes.Status500InternalServerError); }
         }
     }
 }

@@ -11,7 +11,7 @@ namespace FlowSheetAPI.DomainModel.Endocrinology
 
         [Required]
         [Column("patient_id")]
-        public Guid PatientId { get; set; }
+        public string PatientId { get; set; }
         public DateTime Date { get; set; }
         public string? Medication { get; set; }
         public string? Dose { get; set; }

@@ -1,6 +1,7 @@
 ﻿using FlowSheetAPI.DomainModel.Endocrinology;
 using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Interfaces;
+using System.Linq;
 
 namespace FlowSheetAPI.Services.Implementation
 {
@@ -13,7 +14,22 @@ namespace FlowSheetAPI.Services.Implementation
             _unitOfWork = unitOfWork;
         }
 
-        public void AddSheet(Endocrinology endocrinology)
+        public Task<IEnumerable<Endocrinology>> GetAllAsync()
+        {
+            return _unitOfWork.RegisterRepository<Endocrinology>().GetAllAsync();
+        }
+
+        public Task<Endocrinology?> GetByIdAsync(Guid id)
+        {
+            return _unitOfWork.RegisterRepository<Endocrinology>().GetByIdAsync(id);
+        }
+
+        public async Task<IEnumerable<Endocrinology?>> GetByPatient(string patientId)
+        {
+            return await _unitOfWork.RegisterRepository<Endocrinology>().Where(w => w.PatientId == patientId);
+        }
+
+        public void Upsert(Endocrinology endocrinology)
         {
             try
             {
