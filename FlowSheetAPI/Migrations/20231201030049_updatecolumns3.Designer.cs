@@ -3,6 +3,7 @@ using System;
 using FlowSheetAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowSheetAPI.Migrations
 {
     [DbContext(typeof(FlowSheetDbContext))]
-    partial class FlowSheetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231201030049_updatecolumns3")]
+    partial class updatecolumns3
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -47,8 +50,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -84,8 +86,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -141,8 +142,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -224,8 +224,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("Telephone")
                         .HasColumnType("text")
@@ -287,8 +286,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -349,8 +347,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -396,8 +393,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -443,8 +439,7 @@ namespace FlowSheetAPI.Migrations
                         .IsConcurrencyToken()
                         .IsRequired()
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("bytea")
-                        .HasColumnName("row_version");
+                        .HasColumnType("bytea");
 
                     b.Property<string>("UpdatedBy")
                         .IsRequired()
@@ -486,9 +481,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("is_active");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 

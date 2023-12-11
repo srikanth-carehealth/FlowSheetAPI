@@ -7,13 +7,15 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Serilog;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Bind Services
 builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ILookupService, LookupService>();
-builder.Services.AddScoped<IEndocrinologyService, EndocrinologyService>();
+builder.Services.AddScoped<IFlowsheetService, FlowsheetService>();
+builder.Services.AddScoped<IEhrUserService, EhrUserService>();
 
 // Bind Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -83,10 +85,16 @@ builder.Services.AddCors(options =>
 // Add Distributed Memory Cache
 builder.Services.AddDistributedMemoryCache();
 
-builder.Services.AddControllers();
+builder.Services.AddControllers().AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.PropertyNamingPolicy = null;
+    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+});
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddControllersWithViews().AddNewtonsoftJson();
 
 // Add HttpContextAccessor
 builder.Services.AddHttpContextAccessor();

@@ -8,8 +8,7 @@ namespace FlowSheetAPI.Repository.Interfaces
         IQueryable<TEntity> GetAll();
         Task<TEntity?> GetByIdAsync(Guid id);
         Task<IEnumerable<TEntity>> GetAllAsync();
-        Task AddAsync(TEntity entity);
-        void Update(TEntity entity);
+        Task UpsertAsync(TEntity entity);
         void Delete(TEntity entity);
         Task SaveChangesAsync();
         Task<IEnumerable<TEntity>> Where(Expression<Func<TEntity, bool>> predicate);

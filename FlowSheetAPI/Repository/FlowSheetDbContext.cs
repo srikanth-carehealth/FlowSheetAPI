@@ -1,23 +1,36 @@
-﻿using FlowSheetAPI.DomainModel.Endocrinology;
+﻿using FlowSheetAPI.DomainModel;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph;
+using System.Diagnostics;
 
 namespace FlowSheetAPI.Repository
 {
     public class FlowSheetDbContext : DbContext
     {
-        
-        // Table names
-        public DbSet<Endocrinology> Endocrinology { get; set; }
+        private ILoggerFactory _loggerFactory;
 
-        public FlowSheetDbContext(DbContextOptions<FlowSheetDbContext> options)
+        // Table names
+        public DbSet<Doctor> Doctor { get; set; }
+        public DbSet<Flowsheet> Flowsheet { get; set; }
+        public DbSet<FlowsheetApprovalHistory> FlowsheetApprovalHistory { get; set; }
+        public DbSet<FlowsheetApprover> FlowsheetApprover { get; set; }
+        public DbSet<FlowsheetHistory> FlowsheetHistory { get; set; }
+        public DbSet<FlowsheetTemplate> FlowsheetTemplate { get; set; }
+        public DbSet<FlowsheetType> FlowsheetType { get; set; }
+        public DbSet<Patient> Patient { get; set; }
+        public DbSet<SpecialityType> SpecialityType { get; set; }
+
+        public FlowSheetDbContext(DbContextOptions<FlowSheetDbContext> options, ILoggerFactory loggerFactory)
             : base(options)
         {
-            
+            _loggerFactory = loggerFactory;
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+            optionsBuilder.UseLoggerFactory(_loggerFactory);
             optionsBuilder.EnableSensitiveDataLogging();
+            optionsBuilder.EnableDetailedErrors();
         }
     }
 }

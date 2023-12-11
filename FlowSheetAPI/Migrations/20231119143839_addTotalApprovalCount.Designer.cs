@@ -3,6 +3,7 @@ using System;
 using FlowSheetAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowSheetAPI.Migrations
 {
     [DbContext(typeof(FlowSheetDbContext))]
-    partial class FlowSheetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20231119143839_addTotalApprovalCount")]
+    partial class addTotalApprovalCount
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -24,10 +27,12 @@ namespace FlowSheetAPI.Migrations
 
             modelBuilder.Entity("FlowSheetAPI.DomainModel.Doctor", b =>
                 {
-                    b.Property<Guid>("DoctorId")
+                    b.Property<int>("DoctorId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("integer")
                         .HasColumnName("doctor_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("DoctorId"));
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -44,9 +49,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("ehr_user_name");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -81,9 +84,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("created_date");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -96,16 +97,16 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date");
 
-                    b.Property<Guid>("doctor_id")
-                        .HasColumnType("uuid");
+                    b.Property<int>("doctor_id")
+                        .HasColumnType("integer");
 
                     b.Property<string>("flowsheetNote")
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("flowsheet_note");
 
-                    b.Property<Guid>("patient_id")
-                        .HasColumnType("uuid");
+                    b.Property<int>("patient_id")
+                        .HasColumnType("integer");
 
                     b.Property<Guid>("specialityType_id")
                         .HasColumnType("uuid");
@@ -138,9 +139,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("created_date");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -221,9 +220,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("middle_name");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -266,6 +263,11 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_date");
 
+                    b.Property<string>("DoctorId")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("doctor_id");
+
                     b.Property<string>("FlowsheetNote")
                         .IsRequired()
                         .HasColumnType("text")
@@ -283,10 +285,13 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("locked_date");
 
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
+                    b.Property<string>("PatientId")
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
+                        .HasColumnType("text")
+                        .HasColumnName("patient_id");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsRequired()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -299,13 +304,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("updated_date");
 
-                    b.Property<Guid>("doctor_id")
-                        .HasColumnType("uuid");
-
                     b.Property<Guid>("flowsheet_id")
-                        .HasColumnType("uuid");
-
-                    b.Property<Guid>("patient_id")
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("specialityType_id")
@@ -313,11 +312,7 @@ namespace FlowSheetAPI.Migrations
 
                     b.HasKey("FlowsheetHistoryId");
 
-                    b.HasIndex("doctor_id");
-
                     b.HasIndex("flowsheet_id");
-
-                    b.HasIndex("patient_id");
 
                     b.HasIndex("specialityType_id");
 
@@ -346,9 +341,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("created_date");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -393,9 +386,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("created_date");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -420,10 +411,12 @@ namespace FlowSheetAPI.Migrations
 
             modelBuilder.Entity("FlowSheetAPI.DomainModel.Patient", b =>
                 {
-                    b.Property<Guid>("PatientId")
+                    b.Property<int>("PatientId")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid")
+                        .HasColumnType("integer")
                         .HasColumnName("patient_id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("PatientId"));
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()
@@ -440,9 +433,7 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("ehr_user_name");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
@@ -486,13 +477,11 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnName("is_active");
 
                     b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
                         .IsRequired()
-                        .ValueGeneratedOnAddOrUpdate()
                         .HasColumnType("bytea")
                         .HasColumnName("row_version");
 
-                    b.Property<int>("TotalApprovalCount")
+                    b.Property<int?>("TotalApprovalCount")
                         .HasColumnType("integer")
                         .HasColumnName("total_approval_count");
 
@@ -574,21 +563,9 @@ namespace FlowSheetAPI.Migrations
 
             modelBuilder.Entity("FlowSheetAPI.DomainModel.FlowsheetHistory", b =>
                 {
-                    b.HasOne("FlowSheetAPI.DomainModel.Doctor", "Doctor")
-                        .WithMany()
-                        .HasForeignKey("doctor_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("FlowSheetAPI.DomainModel.Flowsheet", "Flowsheet")
                         .WithMany()
                         .HasForeignKey("flowsheet_id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("FlowSheetAPI.DomainModel.Patient", "Patient")
-                        .WithMany()
-                        .HasForeignKey("patient_id")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -598,11 +575,7 @@ namespace FlowSheetAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Doctor");
-
                     b.Navigation("Flowsheet");
-
-                    b.Navigation("Patient");
 
                     b.Navigation("SpecialityType");
                 });

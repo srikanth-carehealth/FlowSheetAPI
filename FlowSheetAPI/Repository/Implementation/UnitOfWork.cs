@@ -1,7 +1,4 @@
-﻿using System.Security.Claims;
-using FlowSheetAPI.DomainModel;
-using FlowSheetAPI.Repository.Interfaces;
-using Microsoft.EntityFrameworkCore;
+﻿using FlowSheetAPI.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore.Storage;
 
 namespace FlowSheetAPI.Repository.Implementation
@@ -31,7 +28,7 @@ namespace FlowSheetAPI.Repository.Implementation
                 return (IRepository<TEntity>)_repositories[typeof(TEntity)];
             }
 
-            var repository = new Repository<TEntity>(_context);
+            var repository = new Repository<TEntity>(_context, _httpContextAccessor);
             _repositories[typeof(TEntity)] = repository;
 
             return repository;
@@ -57,30 +54,6 @@ namespace FlowSheetAPI.Repository.Implementation
 
         public void SaveChanges()
         {
-            // Get all added or modified entities
-            var addedOrModifiedEntities = _context.ChangeTracker.Entries()
-                .Where(x => x is { Entity: BaseEntity, State: EntityState.Added or EntityState.Modified });
-
-            var loggedInUser = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-            // Set the properties for added or modified entities
-            foreach (var entry in addedOrModifiedEntities)
-            {
-                var entity = (BaseEntity)entry.Entity;
-                var now = DateTime.UtcNow;
-
-                if (entry.State == EntityState.Added)
-                {
-                    entity.Id = Guid.NewGuid();
-                    // Get the current logged in user id
-                    entity.CreatedBy = loggedInUser;
-                    entity.CreatedDate = now;
-                }
-                // Get the current logged in user id
-                entity.UpdatedBy = loggedInUser;
-                entity.UpdatedDate = now;
-            }
-
             // Save changes
             _context.SaveChanges();
         }
