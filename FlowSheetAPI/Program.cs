@@ -5,8 +5,10 @@ using FlowSheetAPI.Services.Implementation;
 using FlowSheetAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Graph.ExternalConnectors;
 using Microsoft.Identity.Web;
 using Serilog;
+using Serilog.Events;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,22 +40,27 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
             .AddInMemoryTokenCaches();
 
-// Load Serilog configuration from appsettings.json
+//// Load Serilog configuration from appsettings.json
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
 
 // Add Serilog to the logging pipeline
-builder.Logging.AddSerilog(new LoggerConfiguration()
+
+var blobConfiguration = builder.Configuration.GetConnectionString("AzureblobConnectionString");
+const string storageFileName = "{yyyy}/{MM}/{dd}/chFlowSheet_log.txt";
+
+var logger = new LoggerConfiguration()
     .ReadFrom.Configuration(configuration)
     .Enrich.FromLogContext()
-    .WriteTo.PostgreSQL(
-        connectionString: builder.Configuration.GetConnectionString("DefaultConnection"),
-        tableName: "Logs",
-        needAutoCreateTable: true,
-        schemaName: "public",
-        restrictedToMinimumLevel: Serilog.Events.LogEventLevel.Information)
-    .CreateLogger());
+    .MinimumLevel.Debug() // Adjust based on your needs
+    .WriteTo.AzureBlobStorage(
+        connectionString: blobConfiguration, // Ensure this is your Azure Blob Storage connection string
+        storageFileName: storageFileName)
+    .CreateLogger();
+
+builder.Logging.ClearProviders(); // Clear existing providers if necessary
+builder.Logging.AddSerilog(logger);
 
 // Add CORS policy
 builder.Services.AddCors(options =>
