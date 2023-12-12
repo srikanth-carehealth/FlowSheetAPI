@@ -1,10 +1,12 @@
 ﻿using FlowSheetAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowSheetAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class LookupController : ControllerBase
     {
         private readonly ILookupService _lookupService;

@@ -4,9 +4,11 @@ using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Implementation;
 using FlowSheetAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Graph.ExternalConnectors;
 using Microsoft.Identity.Web;
+using Okta.AspNetCore;
 using Serilog;
 using Serilog.Events;
 using System.Text.Json.Serialization;
@@ -87,6 +89,11 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
 });
 
 // Add Distributed Memory Cache
