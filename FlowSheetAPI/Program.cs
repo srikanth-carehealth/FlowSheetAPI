@@ -119,7 +119,14 @@ var app = builder.Build();
 //if (app.Environment.IsDevelopment())
 //{
     app.UseSwagger();
-    app.UseSwaggerUI();
+app.UseSwaggerUI(c =>
+{
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+
+    // Enable authorization input field in Swagger UI
+    c.EnableTryItOutByDefault();
+    c.RoutePrefix = "swagger"; // Set this to serve Swagger UI at the app's root
+});
 //}
 
 app.UseHttpsRedirection();
