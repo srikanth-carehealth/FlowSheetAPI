@@ -53,5 +53,8 @@ namespace FlowSheetAPI.DomainModel
         [Required]
         [ForeignKey("specialityType_id")]
         public SpecialityType SpecialityType { get; set; }
+
+        [ForeignKey("flowsheetApprover_id")]
+        public FlowsheetApprover? Approver { get; set; }
     }
 }

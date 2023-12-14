@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Linq.Expressions;
 using System.Reflection;
@@ -6,7 +7,6 @@ using System.Security.Claims;
 using System.Text;
 using FlowSheetAPI.Repository.Interfaces;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
 using Newtonsoft.Json;
 
 namespace FlowSheetAPI.Repository.Implementation
@@ -32,8 +32,16 @@ namespace FlowSheetAPI.Repository.Implementation
         public async Task<TEntity?> GetByIdAsync(Guid id) =>
             await Context.Set<TEntity>().FirstOrDefaultAsync(); //.Include(i => i)
 
-        public async Task<IEnumerable<TEntity>> GetAllAsync()
-            => await Context.Set<TEntity>().ToListAsync();
+        public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includeProperties)
+        {
+            IQueryable<TEntity> query = Context.Set<TEntity>();
+
+            foreach (var includeProperty in includeProperties)
+            {
+                query = query.Include(includeProperty);
+            }
+            return await Task.FromResult(query.ToList());
+        }
 
         public async Task UpsertAsync(TEntity entity)
         {

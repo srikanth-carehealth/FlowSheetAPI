@@ -25,12 +25,12 @@ namespace FlowSheetAPI.Services.Implementation
         }
 
         // Get all the flowsheet records from the database.
-        public async Task<IEnumerable<Flowsheet>> GetAllAsync() => await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync();
+        public async Task<IEnumerable<Flowsheet>> GetAllAsync() => await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync(e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
 
         // Get a flowsheet record by id from the database.
         public async Task<Flowsheet?> GetByIdAsync(Guid id)
         {
-            return await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetByIdAsync(id).Result);
+            return await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == id, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
         }
 
         // Get a flowsheet record by patient ehr user name from the database.
@@ -41,7 +41,7 @@ namespace FlowSheetAPI.Services.Implementation
 
             if (patient != null)
             {
-                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId, e => e.Doctor, e => e.SpecialityType));
+                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId, e => e.Doctor, e => e.SpecialityType, e => e.Approver));
             }
 
             return list;
@@ -54,7 +54,7 @@ namespace FlowSheetAPI.Services.Implementation
 
             if (doctor != null)
             {
-                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Doctor.DoctorId == doctor.DoctorId, e => e.Patient, ehrUserName => ehrUserName.SpecialityType));
+                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Doctor.DoctorId == doctor.DoctorId, e => e.Patient, ehrUserName => ehrUserName.SpecialityType, e => e.Approver));
             }
 
             return list;
@@ -69,7 +69,7 @@ namespace FlowSheetAPI.Services.Implementation
 
             if (patient != null && doctor != null)
             {
-                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.Doctor.DoctorId == doctor.DoctorId, e => e.Doctor, e => e.Patient, e => e.SpecialityType));
+                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.Doctor.DoctorId == doctor.DoctorId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
             }
 
             return list;
@@ -165,6 +165,20 @@ namespace FlowSheetAPI.Services.Implementation
                     Patient = flowsheet.Patient,
                     Doctor = flowsheet.Doctor,
                 });
+
+                // Add Flowsheet approver to the database
+                if (flowsheet.Approver != null)
+                {
+                    flowsheet.Approver.SpecialityType = flowsheet.SpecialityType;
+                    _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(flowsheet.Approver);
+
+                    _unitOfWork.RegisterRepository<FlowsheetApprovalHistory>().UpsertAsync(new FlowsheetApprovalHistory
+                    {
+                        FlowsheetApprovalHistoryId = Guid.NewGuid(),
+                        Flowsheet = flowsheet,
+                        FlowsheetApprover = flowsheet.Approver
+                    });
+                }
 
                 // Save the changes to the database.
                 _unitOfWork.SaveChanges();

@@ -7,7 +7,7 @@ namespace FlowSheetAPI.Repository.Interfaces
         TEntity? GetById(Guid id);
         IQueryable<TEntity> GetAll();
         Task<TEntity?> GetByIdAsync(Guid id);
-        Task<IEnumerable<TEntity>> GetAllAsync();
+        Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includeProperties);
         Task UpsertAsync(TEntity entity);
         void Delete(TEntity entity);
         Task SaveChangesAsync();
