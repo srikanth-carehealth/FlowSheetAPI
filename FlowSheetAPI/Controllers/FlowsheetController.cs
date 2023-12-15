@@ -90,8 +90,25 @@ namespace FlowSheetAPI.Controllers
         {
             try
             {
-                var endocrinology = _flowsheetService.GetByDoctorAndPatient(ehrDoctorUserName, ehrPatientUserName);
-                return Ok(endocrinology);
+                var flowsheets = _flowsheetService.GetByDoctorAndPatient(ehrDoctorUserName, ehrPatientUserName);
+                return Ok(flowsheets);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while fetching flowsheet by patient and doctor" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("{specialityType}/{ehrPatientUserName}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult GetBySpecialityAndPatient(string specialityType, string ehrPatientUserName)
+        {
+            try
+            {
+                var flowsheets = _flowsheetService.GetBySpecialityAndPatient(specialityType, ehrPatientUserName);
+                return Ok(flowsheets);
             }
             catch (Exception ex)
             {

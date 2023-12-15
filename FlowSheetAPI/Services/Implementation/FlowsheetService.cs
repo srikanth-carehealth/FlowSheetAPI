@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using FlowSheetAPI.DataTransferObjects;
 using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Interfaces;
@@ -73,6 +74,31 @@ namespace FlowSheetAPI.Services.Implementation
             }
 
             return list;
+        }
+
+        public async Task<FlowSheetWrapper> GetBySpecialityAndPatient(string specialityType, string ehrPatientUserName)
+        {
+            var flowSheetWrapper = new FlowSheetWrapper();
+            var list = Enumerable.Empty<Flowsheet>();
+            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrPatientUserName).Result.FirstOrDefault());
+
+            if (patient != null)
+            {
+                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityType.Value == specialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
+
+                if (list.Count() > 0)
+                {
+
+                    var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+                    flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+                    flowSheetWrapper.Flowsheets = list;
+                    flowSheetWrapper.FlowsheetColumns = columns.Result;
+
+                    return flowSheetWrapper;
+                }
+            }
+
+            return flowSheetWrapper;
         }
 
         public Response Upsert(Flowsheet? flowsheet)

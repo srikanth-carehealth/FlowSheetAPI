@@ -11,5 +11,7 @@ namespace FlowSheetAPI.Services.Interfaces
         public Task<IEnumerable<Flowsheet?>> GetByDoctorAndPatient(string ehrDoctorUserName, string ehrPatientUserName);
         public Response Upsert(Flowsheet? flowsheet);
         public Task<IEnumerable<Flowsheet?>> GetByDoctor(string ehrUserName);
+
+        public Task<FlowSheetWrapper> GetBySpecialityAndPatient(string specialityType, string ehrPatientUserName);
     }
 }
