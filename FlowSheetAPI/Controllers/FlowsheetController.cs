@@ -1,11 +1,13 @@
 ﻿using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowSheetAPI.Controllers
 {
     [Route("api/[controller]/[action]")]
     [ApiController]
+    [Authorize]
     public class FlowsheetController : ControllerBase
     {
         private readonly IFlowsheetService _flowsheetService;
