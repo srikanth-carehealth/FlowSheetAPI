@@ -32,8 +32,21 @@ builder.Services.AddDbContext<FlowSheetDbContext>(options =>
 builder.Services.AddDbContext<FlowSheetDbContext>(ServiceLifetime.Scoped);
 
 // Add services to the container.
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+
+})
+.AddOktaWebApi(new OktaWebApiOptions()
+{
+    OktaDomain = "https://dev-31761595.okta.com/",
+    AuthorizationServerId = "ausdt9omn18w1dHU35d7",
+    Audience = "api://carehealth"
+})
+.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
         .EnableTokenAcquisitionToCallDownstreamApi()
             .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
             .AddInMemoryTokenCaches()
