@@ -45,13 +45,13 @@ builder.Services.AddAuthentication(options =>
     OktaDomain = "https://dev-31761595.okta.com/",
     AuthorizationServerId = "ausdt9omn18w1dHU35d7",
     Audience = "api://carehealth"
-})
-.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
-        .EnableTokenAcquisitionToCallDownstreamApi()
-            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-            .AddInMemoryTokenCaches()
-            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
-            .AddInMemoryTokenCaches();
+});
+//.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
+//        .EnableTokenAcquisitionToCallDownstreamApi()
+//            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
+//            .AddInMemoryTokenCaches()
+//            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
+//            .AddInMemoryTokenCaches();
 
 
 builder.Services.AddAuthorization(options =>
