@@ -5,47 +5,42 @@ using System.Runtime.Serialization;
 namespace FlowSheetAPI.DomainModel
 {
     [Serializable]
-    [Table("FlowsheetTemplate")]
-    public class FlowsheetTemplate
+    [Table("SpecialityConditionType")]
+    public class SpecialityConditionType
     {
         [Key]
         [Required]
-        [Column("flowsheetTemplate_id")]
-        public Guid FlowsheetTemplateId { get; set; }
-
-        [Required]
-        [Column("column_name")]
-        public string? ColumnName { get; set; }
-
-        [Required]
         [DataMember]
+        [Column("speciality_condition_type_id")]
+        public Guid SpecialityConditionTypeId { get; set; }
+
+        [Column("condition_name")]
+        [DataMember]
+        [Required]
+        public string ConditionName { get; set; }
+
         [Column("created_by")]
+        [DataMember]
         public string CreatedBy { get; set; }
 
-        [Required]
-        [DataMember]
         [Column("updated_by")]
         public string UpdatedBy { get; set; }
 
-        [Required]
-        [DataMember]
         [Column("created_date")]
+        [DataMember]
         public DateTime CreatedDate { get; set; }
 
-        [Required]
-        [DataMember]
         [Column("updated_date")]
+        [DataMember]
         public DateTime UpdatedDate { get; set; }
 
         [Column("row_version", TypeName = "bytea")]
+        [DataMember]
         public byte[] RowVersion { get; set; }
 
+        [ForeignKey("speciality_id")]
+        [DataMember]
         [Required]
-        [ForeignKey("specialityType_id")]
         public SpecialityType SpecialityType { get; set; }
-
-        [Required]
-        [ForeignKey("speciality_condition_type_id")]
-        public SpecialityConditionType? SpecialityConditionType { get; set; }
     }
 }

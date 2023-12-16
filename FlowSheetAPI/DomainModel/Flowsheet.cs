@@ -16,7 +16,7 @@ namespace FlowSheetAPI.DomainModel
         [Required]
         [DataMember]
         [Column("flowsheet_note")]
-        public string? FlowsheetNote { get; set; }
+        public string? flowsheetNote { get; set; }
 
         [Required]
         [DataMember]
@@ -53,6 +53,11 @@ namespace FlowSheetAPI.DomainModel
         [Required]
         [ForeignKey("specialityType_id")]
         public SpecialityType SpecialityType { get; set; }
+
+        [Required]
+        [DataMember]
+        [ForeignKey("speciality_condition_type_id")]
+        public SpecialityConditionType SpecialityConditionType { get; set; }
 
         [ForeignKey("flowsheetApprover_id")]
         public FlowsheetApprover? Approver { get; set; }

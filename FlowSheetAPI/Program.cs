@@ -46,7 +46,6 @@ var configuration = new ConfigurationBuilder()
     .Build();
 
 // Add Serilog to the logging pipeline
-
 var blobConfiguration = builder.Configuration.GetConnectionString("AzureblobConnectionString");
 const string storageFileName = "{yyyy}/{MM}/{dd}/chFlowSheet_log.txt";
 
@@ -116,15 +115,8 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 //if (app.Environment.IsDevelopment())
 //{
-    app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-
-    // Enable authorization input field in Swagger UI
-    c.EnableTryItOutByDefault();
-    c.RoutePrefix = "swagger"; // Set this to serve Swagger UI at the app's root
-});
+app.UseSwagger();
+app.UseSwaggerUI();
 //}
 
 app.UseHttpsRedirection();

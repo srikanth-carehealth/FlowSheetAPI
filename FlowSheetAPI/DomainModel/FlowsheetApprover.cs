@@ -69,8 +69,10 @@ namespace FlowSheetAPI.DomainModel
         [Column("row_version", TypeName = "bytea")]
         public byte[] RowVersion { get; set; }
 
-        [Required]
         [ForeignKey("specialityType_id")]
-        public SpecialityType SpecialityType { get; set; }
+        public SpecialityType? SpecialityType { get; set; }
+
+        [ForeignKey("speciality_condition_type_id")]
+        public SpecialityConditionType? SpecialityConditionType { get; set; }
     }
 }

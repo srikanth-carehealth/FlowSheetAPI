@@ -15,7 +15,7 @@ namespace FlowSheetAPI.Repository.Implementation
         protected readonly FlowSheetDbContext Context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public Repository(FlowSheetDbContext context,
+        public Repository(FlowSheetDbContext context, 
                             IHttpContextAccessor httpContextAccessor)
         {
             Context = context;
@@ -65,7 +65,7 @@ namespace FlowSheetAPI.Repository.Implementation
             {
                 // Set the RowVersion property
                 entity.GetType().GetProperty("RowVersion")?.SetValue(entity, Encoding.UTF8.GetBytes(DateTime.Now.ToString(CultureInfo.InvariantCulture)));
-
+                
                 // Set the primary key property
                 var entityKeyProperty = GetPrimaryKeyProperty(entity);
                 if (entityKeyProperty.PropertyType == typeof(Guid))

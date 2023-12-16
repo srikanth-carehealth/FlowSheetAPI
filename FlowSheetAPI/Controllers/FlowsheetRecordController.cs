@@ -8,12 +8,12 @@ namespace FlowSheetAPI.Controllers
     [Route("api/[controller]/[action]")]
     [ApiController]
     [Authorize]
-    public class FlowsheetController : ControllerBase
+    public class FlowsheetRecordController : ControllerBase
     {
         private readonly IFlowsheetService _flowsheetService;
-        private readonly ILogger<FlowsheetController> _logger;
+        private readonly ILogger<FlowsheetRecordController> _logger;
 
-        public FlowsheetController(IFlowsheetService endocrinologyService, ILogger<FlowsheetController> logger)
+        public FlowsheetRecordController(IFlowsheetService endocrinologyService, ILogger<FlowsheetRecordController> logger)
         {
             _flowsheetService = endocrinologyService;
             _logger = logger;
@@ -105,11 +105,11 @@ namespace FlowSheetAPI.Controllers
         [HttpGet]
         [Route("{specialityType}/{ehrPatientUserName}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetBySpecialityAndPatient(string specialityType, string ehrPatientUserName)
+        public IActionResult GetBySpecialityAndPatient(string conditionSpecialityType, string ehrPatientUserName)
         {
             try
             {
-                var flowsheets = _flowsheetService.GetBySpecialityAndPatient(specialityType, ehrPatientUserName);
+                var flowsheets = _flowsheetService.GetBySpecialityConditionAndPatient(conditionSpecialityType, ehrPatientUserName);
                 return Ok(flowsheets);
             }
             catch (Exception ex)

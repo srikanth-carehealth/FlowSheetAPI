@@ -26,6 +26,29 @@ namespace FlowSheetAPI.DomainModel
         [Column("locked_date")]
         public DateTime? LockedDate { get; set; }
 
+        [Column("row_version", TypeName = "bytea")]
+        public byte[] RowVersion { get; set; }
+
+        [Required]
+        [ForeignKey("specialityType_id")]
+        public SpecialityType SpecialityType { get; set; }
+
+        [Required]
+        [ForeignKey("speciality_condition_type_id")]
+        public SpecialityConditionType? SpecialityConditionType { get; set; }
+
+        [Required]
+        [ForeignKey("flowsheet_id")]
+        public Flowsheet? Flowsheet { get; set; }
+
+        [Required]
+        [ForeignKey("doctor_id")]
+        public Doctor Doctor { get; set; }
+
+        [Required]
+        [ForeignKey("patient_id")]
+        public Patient Patient { get; set; }
+
         [Required]
         [DataMember]
         [Column("created_by")]
@@ -45,24 +68,5 @@ namespace FlowSheetAPI.DomainModel
         [DataMember]
         [Column("updated_date")]
         public DateTime UpdatedDate { get; set; }
-
-        [Column("row_version", TypeName = "bytea")]
-        public byte[] RowVersion { get; set; }
-
-        [Required]
-        [ForeignKey("specialityType_id")]
-        public SpecialityType SpecialityType { get; set; }
-
-        [Required]
-        [ForeignKey("flowsheet_id")]
-        public Flowsheet? Flowsheet { get; set; }
-
-        [Required]
-        [ForeignKey("doctor_id")]
-        public Doctor Doctor { get; set; }
-
-        [Required]
-        [ForeignKey("patient_id")]
-        public Patient Patient { get; set; }
     }
 }
