@@ -8,6 +8,6 @@ namespace FlowSheetAPI.DataTransferObjects
 
         public IEnumerable<FlowsheetTemplate>? FlowsheetColumns { get; set; }
 
-        public IEnumerable<Flowsheet> Flowsheets { get; set; }
+        public IEnumerable<FlowSheetVm> Flowsheets { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using FlowSheetAPI.DataTransferObjects;
 using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Interfaces;
+using Newtonsoft.Json;
 using Response = FlowSheetAPI.DataTransferObjects.Response;
 
 namespace FlowSheetAPI.Services.Implementation
@@ -26,43 +27,77 @@ namespace FlowSheetAPI.Services.Implementation
         }
 
         // Get all the flowsheet records from the database.
-        public async Task<IEnumerable<Flowsheet>> GetAllAsync() => await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync(e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
+        public async Task<FlowSheetWrapper> GetAllAsync()
+        {
+            var flowSheetWrapper = new FlowSheetWrapper();
+            var list = Enumerable.Empty<Flowsheet>();
+            list = await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync(e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
+            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+
+            flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+            flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+            flowSheetWrapper.FlowsheetColumns = columns.Result;
+
+            return flowSheetWrapper;
+        }
 
         // Get a flowsheet record by id from the database.
-        public async Task<Flowsheet?> GetByIdAsync(Guid id)
+        public async Task<FlowSheetWrapper> GetByIdAsync(Guid id)
         {
-            return await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == id, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
+            var flowSheetWrapper = new FlowSheetWrapper();
+            var list = new List<Flowsheet>();
+            list.Add(await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == id, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver)));
+            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+
+            flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+            flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+            flowSheetWrapper.FlowsheetColumns = columns.Result;
+
+            return flowSheetWrapper;
         }
 
         // Get a flowsheet record by patient ehr user name from the database.
-        public async Task<IEnumerable<Flowsheet?>> GetByPatient(string ehrUserName)
+        public async Task<FlowSheetWrapper> GetByPatient(string ehrUserName)
         {
+            var flowSheetWrapper = new FlowSheetWrapper();
             var list = Enumerable.Empty<Flowsheet>();
             var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrUserName).Result.FirstOrDefault());
 
             if (patient != null)
             {
                 list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId, e => e.Doctor, e => e.SpecialityType, e => e.Approver));
+                var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+
+                flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+                flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+                flowSheetWrapper.FlowsheetColumns = columns.Result;
             }
 
-            return list;
+            return flowSheetWrapper;
         }
 
-        public async Task<IEnumerable<Flowsheet?>> GetByDoctor(string ehrUserName)
+        public async Task<FlowSheetWrapper> GetByDoctor(string ehrUserName)
         {
+            var flowSheetWrapper = new FlowSheetWrapper();
             var list = Enumerable.Empty<Flowsheet>();
             var doctor = await Task.FromResult(_unitOfWork.RegisterRepository<Doctor>().Where(p => p.EhrUserName == ehrUserName).Result.FirstOrDefault());
 
             if (doctor != null)
             {
                 list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Doctor.DoctorId == doctor.DoctorId, e => e.Patient, ehrUserName => ehrUserName.SpecialityType, e => e.Approver));
+                var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+
+                flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+                flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+                flowSheetWrapper.FlowsheetColumns = columns.Result;
             }
 
-            return list;
+            return flowSheetWrapper;
         }
 
-        public async Task<IEnumerable<Flowsheet?>> GetByDoctorAndPatient(string ehrDoctorUserName, string ehrPatientUserName)
+        public async Task<FlowSheetWrapper> GetByDoctorAndPatient(string ehrDoctorUserName, string ehrPatientUserName)
         {
+            var flowSheetWrapper = new FlowSheetWrapper();
             var list = Enumerable.Empty<Flowsheet>();
             var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrPatientUserName).Result.FirstOrDefault());
 
@@ -71,31 +106,29 @@ namespace FlowSheetAPI.Services.Implementation
             if (patient != null && doctor != null)
             {
                 list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.Doctor.DoctorId == doctor.DoctorId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
+                var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
+
+                flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+                flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+                flowSheetWrapper.FlowsheetColumns = columns.Result;
             }
 
-            return list;
+            return flowSheetWrapper;
         }
 
         public async Task<FlowSheetWrapper> GetBySpecialityAndPatient(string specialityType, string ehrPatientUserName)
         {
             var flowSheetWrapper = new FlowSheetWrapper();
-            var list = Enumerable.Empty<Flowsheet>();
             var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrPatientUserName).Result.FirstOrDefault());
 
             if (patient != null)
             {
-                list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityType.Value == specialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
+                var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityType.Value == specialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
+                var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
 
-                if (list.Count() > 0)
-                {
-
-                    var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-                    flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
-                    flowSheetWrapper.Flowsheets = list;
-                    flowSheetWrapper.FlowsheetColumns = columns.Result;
-
-                    return flowSheetWrapper;
-                }
+                flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
+                flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDm(list);
+                flowSheetWrapper.FlowsheetColumns = columns.Result;
             }
 
             return flowSheetWrapper;
@@ -185,7 +218,7 @@ namespace FlowSheetAPI.Services.Implementation
                 _unitOfWork.RegisterRepository<FlowsheetHistory>().UpsertAsync(new FlowsheetHistory
                 {
                     FlowsheetHistoryId = Guid.NewGuid(),
-                    FlowsheetNote = flowsheet.flowsheetNote,
+                    FlowsheetNote = flowsheet.FlowsheetNote,
                     SpecialityType = flowsheet.SpecialityType,
                     Flowsheet = flowsheet,
                     Patient = flowsheet.Patient,
@@ -228,6 +261,35 @@ namespace FlowSheetAPI.Services.Implementation
             }
 
             return response;
+        }
+
+        private List<FlowSheetVm> ConvertFlowsheetToFlowSheetDm(IEnumerable<Flowsheet> list)
+        {
+            var flowSheetlist = new List<FlowSheetVm>();
+
+            if (list.Count() > 0)
+            {
+                foreach (var item in list)
+                {
+                    var flowsheetVm = new FlowSheetVm();
+                    flowsheetVm.FlowsheetId = item.FlowsheetId;
+                    flowsheetVm.CreatedBy = item.CreatedBy;
+                    flowsheetVm.UpdatedBy = item.UpdatedBy;
+                    flowsheetVm.CreatedDate = item.CreatedDate;
+                    flowsheetVm.UpdatedDate = item.UpdatedDate;
+                    flowsheetVm.Patient = item.Patient;
+                    flowsheetVm.Doctor = item.Doctor;
+                    flowsheetVm.SpecialityType = item.SpecialityType;
+                    flowsheetVm.Approver = item.Approver;
+
+                    if (item.FlowsheetNote != null)
+                    {
+                        flowsheetVm.FlowsheetNote = JsonConvert.DeserializeObject<FlowSheetNote>(item.FlowsheetNote);
+                    }
+                    flowSheetlist.Add(flowsheetVm);
+                }
+            }
+            return flowSheetlist;
         }
     }
 }

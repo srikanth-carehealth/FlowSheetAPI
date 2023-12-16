@@ -16,7 +16,7 @@ namespace FlowSheetAPI.DomainModel
         [Required]
         [DataMember]
         [Column("flowsheet_note")]
-        public string? flowsheetNote { get; set; }
+        public string? FlowsheetNote { get; set; }
 
         [Required]
         [DataMember]

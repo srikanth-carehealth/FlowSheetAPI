@@ -1,7 +1,5 @@
 ﻿using FlowSheetAPI.DomainModel;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Graph;
-using System.Diagnostics;
 
 namespace FlowSheetAPI.Repository
 {
