@@ -53,6 +53,13 @@ builder.Services.AddAuthentication(options =>
             .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
             .AddInMemoryTokenCaches();
 
+
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
+});
+
+
 //// Load Serilog configuration from appsettings.json
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
@@ -100,11 +107,6 @@ builder.Services.AddCors(options =>
                 .AllowAnyMethod()
                 .AllowAnyHeader();
         });
-});
-
-builder.Services.AddAuthorization(options =>
-{
-    options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
 });
 
 // Add Distributed Memory Cache
