@@ -16,8 +16,8 @@ namespace FlowSheetAPI.DomainModel
 
         [Required]
         [DataMember]
-        [Column("lab_item_id")]
-        public Guid LabItemId { get; set; }
+        [Column("is_active")]
+        public bool IsActive { get; set; }
 
         [Required]
         [DataMember]
@@ -53,6 +53,10 @@ namespace FlowSheetAPI.DomainModel
         [DataMember]
         [Column("row_version", TypeName = "bytea")]
         public byte[] RowVersion { get; set; }
+
+        [Required]
+        [ForeignKey("lab_item_id")]
+        public LabItem LabItem { get; set; }
 
         [Required]
         [ForeignKey("specialityType_id")]

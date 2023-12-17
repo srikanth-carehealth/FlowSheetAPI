@@ -6,14 +6,14 @@ using FlowSheetAPI.Services.Interfaces;
 
 namespace FlowSheetAPI.Services.Implementation
 {
-    public class AdminService: IAdminService    
+    public class AdminService : IAdminService
     {
         public ILogger<AdminService> _logger { get; }
         private readonly IUnitOfWork _unitOfWork;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AdminService(ILogger<AdminService> logger, 
-                            IUnitOfWork unitOfWork, 
+        public AdminService(ILogger<AdminService> logger,
+                            IUnitOfWork unitOfWork,
                             IHttpContextAccessor httpContextAccessor)
         {
             _logger = logger;
@@ -58,29 +58,53 @@ namespace FlowSheetAPI.Services.Implementation
             // Get the current logged in user id
             var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
                                "System";
-
-
-            if (specialityConditionType == null)
-            {
-                response.Message = "Speciality Condition Type is null";
-                response.Success = false;
-                return response;
-            }
-
             try
             {
                 // Begin a transaction.
                 _unitOfWork.BeginTransaction();
-                
-                // Upsert the speciality condition type.
-                _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(specialityConditionType);                
-                
-                // Save the changes to the database.
-                _unitOfWork.SaveChanges();
-                
-                // Commit the transaction.
-                _unitOfWork.CommitTransaction();
 
+                if (specialityConditionType?.SpecialityType != null)
+                {
+                    // Get the speciality type.
+                    var specialityType = _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(specialityConditionType.SpecialityType.SpecialityTypeId).Result;
+
+                    if (specialityConditionType.SpecialityConditionTypeId == Guid.Empty)
+                    {
+                        var newSpecialityConditionType = new SpecialityConditionType
+                        {
+                            ClientId = specialityConditionType.ClientId,
+                            ClientName = specialityConditionType.ClientName,
+                            ConditionName = specialityConditionType.ConditionName,
+                            SpecilityConditionCode = specialityConditionType.SpecilityConditionCode,
+                            IsActive = true,
+                            SpecialityType = specialityType,
+                            CreatedBy = loggedInUser,
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = loggedInUser,
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the speciality condition type.
+                        _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(newSpecialityConditionType);
+                    }
+
+                    // Upsert the speciality condition type.
+                    _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(specialityConditionType);
+
+                    // Save the changes to the database.
+                    _unitOfWork.SaveChanges();
+
+                    // Commit the transaction.
+                    _unitOfWork.CommitTransaction();
+
+                    response.Success = true;
+                    response.Message = "Speciality condition data saved successfully.";
+
+                    return response;
+                }
+
+                response.Success = false;
+                response.Message = "Speciality type data cannot be null.";
                 return response;
             }
             catch (Exception e)
@@ -95,17 +119,167 @@ namespace FlowSheetAPI.Services.Implementation
 
         public Response Upsert(SpecialityType? specialityType)
         {
-            throw new NotImplementedException();
+            var response = new Response();
+
+            // Get the current logged in user id
+            var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                               "System";
+            try
+            {
+                // Begin a transaction.
+                _unitOfWork.BeginTransaction();
+
+                if (specialityType != null)
+                {
+                    if (specialityType.SpecialityTypeId == Guid.Empty)
+                    {
+                        var newSpecialityType = new SpecialityType
+                        {
+                            ClientId = specialityType.ClientId,
+                            ClientName = specialityType.ClientName,
+                            SpecialityCode = specialityType.SpecialityCode,
+                            SpecialityName = specialityType.SpecialityName,
+                            TotalApprovalCount = specialityType.TotalApprovalCount,
+                            IsActive = true,
+                            CreatedBy = loggedInUser,
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = loggedInUser,
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the speciality type.
+                        _unitOfWork.RegisterRepository<SpecialityType>().UpsertAsync(newSpecialityType);
+                    }
+
+                    // Upsert the speciality type.
+                    _unitOfWork.RegisterRepository<SpecialityType>().UpsertAsync(specialityType);
+
+                    // Save the changes to the database.
+                    _unitOfWork.SaveChanges();
+
+                    // Commit the transaction.
+                    _unitOfWork.CommitTransaction();
+
+                    response.Success = true;
+                    response.Message = "Speciality data saved successfully.";
+
+                    return response;
+                }
+
+                response.Success = false;
+                response.Message = "Speciality type data cannot be null.";
+                return response;
+            }
+            catch (Exception e)
+            {
+                return response;
+            }
         }
 
         public Response Upsert(LabItem? labItem)
         {
-            throw new NotImplementedException();
+            try
+            {
+
+                // Begin a transaction.
+                _unitOfWork.BeginTransaction();
+                if (labItem != null)
+                {
+                    if (labItem.LabItemId == Guid.Empty)
+                    {
+                        var newLabItem = new LabItem
+                        {
+                            LabItemName = labItem.LabItemName,
+                            LabItemCode = labItem.LabItemCode,
+                            IsActive = true,
+                            CreatedBy = "System",
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = "System",
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the lab item.
+                        _unitOfWork.RegisterRepository<LabItem>().UpsertAsync(newLabItem);
+                    }
+
+                    // Upsert the lab item.
+                    _unitOfWork.RegisterRepository<LabItem>().UpsertAsync(labItem);
+
+                    // Save the changes to the database.
+                    _unitOfWork.SaveChanges();
+
+                    // Commit the transaction.
+                    _unitOfWork.CommitTransaction();
+
+                    var response = new Response { Success = true, Message = "Lab item data saved successfully." };
+                    return response;
+                }
+                var errorResponse = new Response { Success = false, Message = "Lab item data cannot be null." };
+                return errorResponse;
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.RollbackTransaction();
+                _logger.LogError("Error occurred while saving lab item data. " + e);
+                var errorResponse = new Response { Success = false, Message = "Error occurred while saving lab item data." };
+                return errorResponse;
+            }
         }
 
         public Response Upsert(LabItemSpeciality? labItemSpeciality)
         {
-            throw new NotImplementedException();
+            try
+            {
+                // Begin a transaction.
+                _unitOfWork.BeginTransaction();
+
+                if (labItemSpeciality != null)
+                {
+                    if (labItemSpeciality.LabItemSpecialityId == Guid.Empty)
+                    {
+                        var newLabItemSpeciality = new LabItemSpeciality
+                        {
+                            LabItemSpecialityId = Guid.NewGuid(),
+                            LabItem = labItemSpeciality.LabItem,
+                            SpecialityType = labItemSpeciality.SpecialityType,
+                            ClientId = labItemSpeciality.ClientId,
+                            ClientName = labItemSpeciality.ClientName,
+                            IsActive = true,
+                            CreatedBy = "System",
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = "System",
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the lab item speciality.
+                        _unitOfWork.RegisterRepository<LabItemSpeciality>().UpsertAsync(newLabItemSpeciality);
+                    }
+
+                    // Upsert the lab item speciality.
+                    _unitOfWork.RegisterRepository<LabItemSpeciality>().UpsertAsync(labItemSpeciality);
+
+                    // Save the changes to the database.
+                    _unitOfWork.SaveChanges();
+
+                    // Commit the transaction.
+                    _unitOfWork.CommitTransaction();
+
+                    var response = new Response
+                    { Success = true, Message = "Lab item speciality data saved successfully." };
+                    return response;
+                }
+
+                var errorResponse = new Response
+                { Success = false, Message = "Lab item speciality data cannot be null." };
+                return errorResponse;
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.RollbackTransaction();
+                _logger.LogError("Error occurred while saving lab item speciality data. " + e);
+                var errorResponse = new Response { Success = false, Message = "Error occurred while saving lab item speciality data." };
+                return errorResponse;
+            }
         }
     }
 }

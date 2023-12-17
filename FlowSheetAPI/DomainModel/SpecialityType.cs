@@ -21,12 +21,11 @@ namespace FlowSheetAPI.DomainModel
         public string ClientName { get; set; }
 
         [Required]
-        [Column("code")]
-        public string? Code { get; set; }
+        [Column("speciality_name")]
+        public string SpecialityName { get; set; }
 
-        [Required]
-        [Column("value")]
-        public string? Value { get; set; }
+        [Column("speciality_code")]
+        public string SpecialityCode { get; set; }
 
         [Required]
         [Column("is_active")]

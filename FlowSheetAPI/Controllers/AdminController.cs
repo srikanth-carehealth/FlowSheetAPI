@@ -1,14 +1,15 @@
 ﻿using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowSheetAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class AdminController : ControllerBase
-    { 
+    {
         private ILogger<AdminController> _logger { get; }
         private readonly IAdminService _adminService;
 
@@ -121,20 +122,68 @@ namespace FlowSheetAPI.Controllers
             }
         }
 
-        //[HttpPost]
-        //[ProducesResponseType(StatusCodes.Status200OK)]
-        //public async Task<IActionResult> AddSpecialityType(SpecialityType specialityType)
-        //{
-        //    try
-        //    {
-        //        var specialityTypes = await .AddSpecialityType(specialityType);
-        //        return Ok(specialityTypes);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError("Error occurred while adding speciality type" + ex);
-        //        return StatusCode(StatusCodes.Status500InternalServerError);
-        //    }
-        //}
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddSpecialityType(SpecialityType specialityType)
+        {
+            try
+            {
+                var response = _adminService.Upsert(specialityType);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding speciality type" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddSpecialityConditionType(SpecialityConditionType specialityConditionType)
+        {
+            try
+            {
+                var response = _adminService.Upsert(specialityConditionType);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding speciality condition type" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddLabItem(LabItem labItem)
+        {
+            try
+            {
+                var response = _adminService.Upsert(labItem);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding lab item" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddLabItemSpeciality(LabItemSpeciality labItemSpeciality)
+        {
+            try
+            {
+                var response = _adminService.Upsert(labItemSpeciality);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding lab item speciality" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }

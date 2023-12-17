@@ -19,6 +19,14 @@ namespace FlowSheetAPI.DomainModel
         [Required]
         public string ConditionName { get; set; }
 
+        [DataMember]
+        [Column("speciality_condition_code")]
+        public string SpecilityConditionCode { get; set; }
+
+        [Required]
+        [Column("is_active")]
+        public bool IsActive { get; set; }
+
         [Required]
         [Column("client_id")]
         public string ClientId { get; set; }

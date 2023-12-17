@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Runtime.Serialization;
 
@@ -18,6 +19,15 @@ namespace FlowSheetAPI.DomainModel
         [DataMember]
         [Column("lab_item_name")]
         public string LabItemName { get; set; }
+
+        [DataMember]
+        [Column("lab_item_code")]
+        public string? LabItemCode { get; set; }
+
+        [Required]
+        [DataMember]
+        [Column("is_active")]
+        public bool IsActive { get; set; }
 
         [Required]
         [Column("created_by")]
