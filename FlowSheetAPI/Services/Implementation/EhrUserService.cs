@@ -56,9 +56,9 @@ namespace FlowSheetAPI.Services.Implementation
             return response;
         }
 
-        public Task<Patient?> GetPatientByUserName(string ehrUserName)
+        public Task<Patient?> GetPatientByUserName(int ehrPatientId)
         {
-            return Task.Run(() => _unitOfWork.RegisterRepository<Patient>().Where(d => d.EhrUserName == ehrUserName).Result.FirstOrDefault());
+            return Task.Run(() => _unitOfWork.RegisterRepository<Patient>().Where(d => d.EhrPatientId == ehrPatientId).Result.FirstOrDefault());
         }
 
         public Response UpsertPatient(Patient patient)

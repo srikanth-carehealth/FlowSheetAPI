@@ -69,13 +69,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{ehrUserName}")]
+        [Route("{ehrPatientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByPatient(string ehrUserName)
+        public IActionResult GetByPatient(int ehrPatientId)
         {
             try
             {
-                var patient = _flowsheetService.GetByPatient(ehrUserName);
+                var patient = _flowsheetService.GetByPatient(ehrPatientId);
                 return Ok(patient);
             }
             catch (Exception ex)
@@ -86,13 +86,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{ehrDoctorUserName}/{ehrPatientUserName}")]
+        [Route("{ehrDoctorUserName}/{ehrPatientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByDoctorAndPatient(string ehrDoctorUserName, string ehrPatientUserName)
+        public IActionResult GetByDoctorAndPatient(string ehrDoctorUserName, int ehrPatientId)
         {
             try
             {
-                var flowsheets = _flowsheetService.GetByDoctorAndPatient(ehrDoctorUserName, ehrPatientUserName);
+                var flowsheets = _flowsheetService.GetByDoctorAndPatient(ehrDoctorUserName, ehrPatientId);
                 return Ok(flowsheets);
             }
             catch (Exception ex)
@@ -103,13 +103,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{specialityType}/{ehrPatientUserName}")]
+        [Route("{specialityType}/{ehrPatientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetBySpecialityAndPatient(string conditionSpecialityType, string ehrPatientUserName)
+        public IActionResult GetBySpecialityAndPatient(string conditionSpecialityType, int ehrPatientId)
         {
             try
             {
-                var flowsheets = _flowsheetService.GetBySpecialityConditionAndPatient(conditionSpecialityType, ehrPatientUserName);
+                var flowsheets = _flowsheetService.GetBySpecialityConditionAndPatient(conditionSpecialityType, ehrPatientId);
                 return Ok(flowsheets);
             }
             catch (Exception ex)

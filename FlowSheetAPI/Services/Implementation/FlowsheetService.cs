@@ -57,11 +57,11 @@ namespace FlowSheetAPI.Services.Implementation
         }
 
         // Get a flowsheet record by patient ehr user name from the database.
-        public async Task<FlowSheetWrapper> GetByPatient(string ehrUserName)
+        public async Task<FlowSheetWrapper> GetByPatient(int ehrPatientId)
         {
             var flowSheetWrapper = new FlowSheetWrapper();
             var list = Enumerable.Empty<Flowsheet>();
-            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrUserName).Result.FirstOrDefault());
+            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrPatientId == ehrPatientId).Result.FirstOrDefault());
 
             if (patient != null)
             {
@@ -95,11 +95,11 @@ namespace FlowSheetAPI.Services.Implementation
             return flowSheetWrapper;
         }
 
-        public async Task<FlowSheetWrapper> GetByDoctorAndPatient(string ehrDoctorUserName, string ehrPatientUserName)
+        public async Task<FlowSheetWrapper> GetByDoctorAndPatient(string ehrDoctorUserName, int ehrPatientId)
         {
             var flowSheetWrapper = new FlowSheetWrapper();
             var list = Enumerable.Empty<Flowsheet>();
-            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrPatientUserName).Result.FirstOrDefault());
+            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrPatientId == ehrPatientId).Result.FirstOrDefault());
 
             var doctor = await Task.FromResult(_unitOfWork.RegisterRepository<Doctor>().Where(p => p.EhrUserName == ehrDoctorUserName).Result.FirstOrDefault());
 
@@ -116,10 +116,10 @@ namespace FlowSheetAPI.Services.Implementation
             return flowSheetWrapper;
         }
 
-        public async Task<FlowSheetWrapper> GetBySpecialityConditionAndPatient(string conditionSpecialityType, string ehrPatientUserName)
+        public async Task<FlowSheetWrapper> GetBySpecialityConditionAndPatient(string conditionSpecialityType, int ehrPatientId)
         {
             var flowSheetWrapper = new FlowSheetWrapper();
-            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrUserName == ehrPatientUserName).Result.FirstOrDefault());
+            var patient = await Task.FromResult(_unitOfWork.RegisterRepository<Patient>().Where(p => p.EhrPatientId == ehrPatientId).Result.FirstOrDefault());
 
             if (patient != null)
             {
@@ -200,7 +200,7 @@ namespace FlowSheetAPI.Services.Implementation
                 }
 
                 // lookup by patient ehr user name
-                var patient = _ehrUserService.GetPatientByUserName(flowsheet.Patient.EhrUserName).Result;
+                var patient = _ehrUserService.GetPatientByUserName(flowsheet.Patient.EhrPatientId).Result;
 
                 // if patient is null, create a new patient
                 if (patient == null)
@@ -209,7 +209,7 @@ namespace FlowSheetAPI.Services.Implementation
                     var newPatient = new Patient
                     {
                         PatientId = Guid.NewGuid(),
-                        EhrUserName = flowsheet.Patient.EhrUserName,
+                        EhrPatientId = flowsheet.Patient.EhrPatientId,
                         CreatedBy = loggedInUser,
                         CreatedDate = DateTime.UtcNow,
                         UpdatedBy = loggedInUser,

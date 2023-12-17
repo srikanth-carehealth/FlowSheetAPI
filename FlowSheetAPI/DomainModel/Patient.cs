@@ -14,8 +14,8 @@ namespace FlowSheetAPI.DomainModel
         public Guid PatientId { get; set; }
 
         [Required]
-        [Column("ehr_user_name")]
-        public string? EhrUserName { get; set; }
+        [Column("ehr_patient_id")]
+        public int EhrPatientId { get; set; }
 
         [Required]
         [DataMember]

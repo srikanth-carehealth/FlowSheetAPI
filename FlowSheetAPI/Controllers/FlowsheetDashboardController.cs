@@ -69,13 +69,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{ehrUserName}")]
+        [Route("{ehrPatientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByPatient(string ehrUserName)
+        public IActionResult GetByPatient(int ehrPatientId)
         {
             try
             {
-                var patient = _flowsheetService.GetByPatient(ehrUserName);
+                var patient = _flowsheetService.GetByPatient(ehrPatientId);
                 return Ok(patient);
             }
             catch (Exception ex)
