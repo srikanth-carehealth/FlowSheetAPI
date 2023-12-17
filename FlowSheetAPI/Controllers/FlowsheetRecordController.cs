@@ -103,7 +103,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{specialityType}/{ehrPatientId}")]
+        [Route("{conditionSpecialityType}/{ehrPatientId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetBySpecialityAndPatient(string conditionSpecialityType, int ehrPatientId)
         {
