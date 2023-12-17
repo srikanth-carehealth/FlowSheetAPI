@@ -18,6 +18,14 @@ namespace FlowSheetAPI.DomainModel
         public string? ColumnName { get; set; }
 
         [Required]
+        [Column("client_id")]
+        public string ClientId { get; set; }
+
+        [Required]
+        [Column("client_name")]
+        public string ClientName { get; set; }
+
+        [Required]
         [DataMember]
         [Column("created_by")]
         public string CreatedBy { get; set; }

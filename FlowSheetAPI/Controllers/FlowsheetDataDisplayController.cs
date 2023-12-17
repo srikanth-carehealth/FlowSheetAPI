@@ -7,13 +7,13 @@ namespace FlowSheetAPI.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class FlowsheetDashboardController : ControllerBase
+    public class FlowsheetDataDisplayController : ControllerBase
     {
         private readonly IFlowsheetService _flowsheetService;
-        private readonly ILogger<FlowsheetDashboardController> _logger;
+        private readonly ILogger<FlowsheetDataDisplayController> _logger;
 
-        public FlowsheetDashboardController(IFlowsheetService flowsheetService,
-            ILogger<FlowsheetDashboardController> logger)
+        public FlowsheetDataDisplayController(IFlowsheetService flowsheetService,
+            ILogger<FlowsheetDataDisplayController> logger)
         {
             _flowsheetService = flowsheetService;
             _logger = logger;

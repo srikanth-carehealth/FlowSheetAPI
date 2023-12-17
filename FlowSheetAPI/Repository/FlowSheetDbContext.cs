@@ -14,10 +14,12 @@ namespace FlowSheetAPI.Repository
         public DbSet<FlowsheetApprover> FlowsheetApprover { get; set; }
         public DbSet<FlowsheetHistory> FlowsheetHistory { get; set; }
         public DbSet<FlowsheetTemplate> FlowsheetTemplate { get; set; }
-        public DbSet<FlowsheetType> FlowsheetType { get; set; }
+        public DbSet<LabItem> LabItem { get; set; }
+        public DbSet<LabItemSpeciality> LabItemSpeciality { get; set; }
         public DbSet<Patient> Patient { get; set; }
+        public DbSet<SpecialityConditionType> SpecialityConditionType { get; set; }
         public DbSet<SpecialityType> SpecialityType { get; set; }
-
+        
         public FlowSheetDbContext(DbContextOptions<FlowSheetDbContext> options, ILoggerFactory loggerFactory)
             : base(options)
         {

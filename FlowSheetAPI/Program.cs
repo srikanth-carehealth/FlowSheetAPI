@@ -3,10 +3,8 @@ using FlowSheetAPI.Repository.Implementation;
 using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Implementation;
 using FlowSheetAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Identity.Web;
 using Okta.AspNetCore;
 using Serilog;
 using System.Text.Json.Serialization;
@@ -32,7 +30,6 @@ builder.Services.AddDbContext<FlowSheetDbContext>(options =>
 builder.Services.AddDbContext<FlowSheetDbContext>(ServiceLifetime.Scoped);
 
 // Add services to the container.
-//builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
@@ -46,21 +43,13 @@ builder.Services.AddAuthentication(options =>
     AuthorizationServerId = "ausdt9omn18w1dHU35d7",
     Audience = "api://carehealth"
 });
-//.AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
-//        .EnableTokenAcquisitionToCallDownstreamApi()
-//            .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-//            .AddInMemoryTokenCaches()
-//            .AddDownstreamApi("DownstreamApi", builder.Configuration.GetSection("DownstreamApi"))
-//            .AddInMemoryTokenCaches();
-
 
 builder.Services.AddAuthorization(options =>
 {
     options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
 });
 
-
-//// Load Serilog configuration from appsettings.json
+// Load Serilog configuration from appsettings.json
 var configuration = new ConfigurationBuilder()
     .AddJsonFile("appsettings.json")
     .Build();
@@ -117,6 +106,7 @@ builder.Services.AddControllers().AddJsonOptions(options =>
     options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

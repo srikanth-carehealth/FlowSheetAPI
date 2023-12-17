@@ -5,21 +5,29 @@ using System.Runtime.Serialization;
 namespace FlowSheetAPI.DomainModel
 {
     [Serializable]
-    [Table("FlowsheetType")]
-    public class FlowsheetType
+    [Table("LabItemSpeciality")]
+    public class LabItemSpeciality
     {
         [Key]
         [Required]
-        [Column("flowsheetType_id")]
-        public Guid FlowsheetTypeId { get; set; }
+        [DataMember]
+        [Column("lab_item_speciality_id")]
+        public Guid LabItemSpecialityId { get; set; }
 
         [Required]
-        [Column("code")]
-        public string? Code { get; set; }
+        [DataMember]
+        [Column("lab_item_id")]
+        public Guid LabItemId { get; set; }
 
         [Required]
-        [Column("value")]
-        public string? Value { get; set; }
+        [DataMember]
+        [Column("client_id")]
+        public string ClientId { get; set; }
+
+        [Required]
+        [DataMember]
+        [Column("client_name")]
+        public string ClientName { get; set; }
 
         [Required]
         [DataMember]
@@ -41,7 +49,17 @@ namespace FlowSheetAPI.DomainModel
         [Column("updated_date")]
         public DateTime UpdatedDate { get; set; }
 
+        [Required]
+        [DataMember]
         [Column("row_version", TypeName = "bytea")]
         public byte[] RowVersion { get; set; }
+
+        [Required]
+        [ForeignKey("specialityType_id")]
+        public SpecialityType SpecialityType { get; set; }
+
+        [Required]
+        [ForeignKey("speciality_contition_type_id")]
+        public SpecialityConditionType SpecialityConditionType { get; set; }
     }
 }

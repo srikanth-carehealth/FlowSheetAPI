@@ -138,6 +138,7 @@ namespace FlowSheetAPI.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError("Error occurred while saving flowsheet data. " + ex);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }

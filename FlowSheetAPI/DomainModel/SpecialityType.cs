@@ -13,6 +13,14 @@ namespace FlowSheetAPI.DomainModel
         public Guid SpecialityTypeId { get; set; }
 
         [Required]
+        [Column("client_id")]
+        public string ClientId { get; set; }
+
+        [Required]
+        [Column("client_name")]
+        public string ClientName { get; set; }
+
+        [Required]
         [Column("code")]
         public string? Code { get; set; }
 

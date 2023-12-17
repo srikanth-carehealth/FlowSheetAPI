@@ -47,6 +47,14 @@ namespace FlowSheetAPI.DomainModel
         public bool IsActive { get; set; }
 
         [Required]
+        [Column("client_id")]
+        public string ClientId { get; set; }
+
+        [Required]
+        [Column("client_name")]
+        public string ClientName { get; set; }
+
+        [Required]
         [DataMember]
         [Column("created_by")]
         public string CreatedBy { get; set; }
@@ -66,12 +74,16 @@ namespace FlowSheetAPI.DomainModel
         [Column("updated_date")]
         public DateTime UpdatedDate { get; set; }
 
+        [Required]
+        [DataMember]
         [Column("row_version", TypeName = "bytea")]
         public byte[] RowVersion { get; set; }
 
+        [Required]
         [ForeignKey("specialityType_id")]
         public SpecialityType? SpecialityType { get; set; }
 
+        [Required]
         [ForeignKey("speciality_condition_type_id")]
         public SpecialityConditionType? SpecialityConditionType { get; set; }
     }

@@ -5,50 +5,37 @@ using System.Runtime.Serialization;
 namespace FlowSheetAPI.DomainModel
 {
     [Serializable]
-    [Table("SpecialityConditionType")]
-    public class SpecialityConditionType
+    [Table("LabItem")]
+    public class LabItem
     {
         [Key]
         [Required]
         [DataMember]
-        [Column("speciality_condition_type_id")]
-        public Guid SpecialityConditionTypeId { get; set; }
+        [Column("lab_item_id")]
+        public Guid LabItemId { get; set; }
 
-        [Column("condition_name")]
+        [Required]
         [DataMember]
-        [Required]
-        public string ConditionName { get; set; }
+        [Column("lab_item_name")]
+        public string LabItemName { get; set; }
 
         [Required]
-        [Column("client_id")]
-        public string ClientId { get; set; }
-
-        [Required]
-        [Column("client_name")]
-        public string ClientName { get; set; }
-
         [Column("created_by")]
-        [DataMember]
         public string CreatedBy { get; set; }
 
+        [Required]
         [Column("updated_by")]
         public string UpdatedBy { get; set; }
 
+        [Required]
         [Column("created_date")]
-        [DataMember]
         public DateTime CreatedDate { get; set; }
 
+        [Required]
         [Column("updated_date")]
-        [DataMember]
         public DateTime UpdatedDate { get; set; }
 
         [Column("row_version", TypeName = "bytea")]
-        [DataMember]
         public byte[] RowVersion { get; set; }
-
-        [ForeignKey("speciality_id")]
-        [DataMember]
-        [Required]
-        public SpecialityType SpecialityType { get; set; }
     }
 }
