@@ -106,7 +106,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
-        [Route("{specialityTypeId}")]
+        [Route("GetLabItemBySpeciality/{specialityTypeId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public async Task<IActionResult> GetLabItemBySpeciality(Guid specialityTypeId)
         {
@@ -123,6 +123,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddSpecialityType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddSpecialityType(SpecialityType specialityType)
         {
@@ -139,6 +140,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddConditionType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddSpecialityConditionType(SpecialityConditionType specialityConditionType)
         {
@@ -155,6 +157,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddLabItem")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddLabItem(LabItem labItem)
         {
@@ -171,6 +174,7 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
+        [Route("AddLabItemSpeciality")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult AddLabItemSpeciality(LabItemSpeciality labItemSpeciality)
         {

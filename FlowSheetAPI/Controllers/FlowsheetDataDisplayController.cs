@@ -21,7 +21,7 @@ namespace FlowSheetAPI.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAllFlowsheets()
         {
             try
             {
@@ -36,51 +36,18 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpGet]
+        [Route("{flowsheetId}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetById(Guid id)
+        public IActionResult GetFlowsheetById(Guid flowsheetId)
         {
             try
             {
-                var flowSheet = _flowsheetService.GetByIdAsync(id);
+                var flowSheet = _flowsheetService.GetByIdAsync(flowsheetId);
                 return Ok(flowSheet);
             }
             catch (Exception ex)
             {
                 _logger.LogError("Error occurred while fetching flowsheet by id" + ex);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [HttpGet]
-        [Route("{ehrUserName}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByDoctor(string ehrUserName)
-        {
-            try
-            {
-                var doctor = _flowsheetService.GetByDoctor(ehrUserName);
-                return Ok(doctor);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error occurred while fetching flowsheet by doctor" + ex);
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-        }
-
-        [HttpGet]
-        [Route("{ehrPatientId}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult GetByPatient(int ehrPatientId)
-        {
-            try
-            {
-                var patient = _flowsheetService.GetByPatient(ehrPatientId);
-                return Ok(patient);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Error occurred while fetching flowsheet by patient" + ex);
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
