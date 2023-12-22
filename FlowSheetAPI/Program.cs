@@ -16,6 +16,7 @@ builder.Services.AddScoped<ICacheService, CacheService>();
 builder.Services.AddScoped<ILookupService, LookupService>();
 builder.Services.AddScoped<IFlowsheetService, FlowsheetService>();
 builder.Services.AddScoped<IEhrUserService, EhrUserService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 // Bind Repositories
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
