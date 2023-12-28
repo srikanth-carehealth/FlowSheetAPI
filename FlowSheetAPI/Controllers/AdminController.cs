@@ -7,7 +7,7 @@ namespace FlowSheetAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    //[Authorize]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private ILogger<AdminController> _logger { get; }
