@@ -40,8 +40,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddOktaWebApi(new OktaWebApiOptions()
 {
-    OktaDomain = "https://dev-31761595.okta.com/",
-    AuthorizationServerId = "ausdt9omn18w1dHU35d7",
+    OktaDomain = "https://carehealthai.okta.com/",
+    AuthorizationServerId = "aus1olzi3kzoGICrr1d8",
     Audience = "api://carehealth"
 });
 
