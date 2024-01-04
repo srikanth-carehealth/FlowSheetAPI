@@ -6,7 +6,7 @@ namespace FlowSheetAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class FlowsheetDataDisplayController : ControllerBase
     {
         private readonly IFlowsheetService _flowsheetService;

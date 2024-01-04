@@ -289,16 +289,18 @@ namespace FlowSheetAPI.Services.Implementation
             {
                 foreach (var item in list)
                 {
-                    var flowsheetVM = new FlowSheetVM();
-                    flowsheetVM.FlowsheetId = item.FlowsheetId;
-                    flowsheetVM.CreatedBy = item.CreatedBy;
-                    flowsheetVM.UpdatedBy = item.UpdatedBy;
-                    flowsheetVM.CreatedDate = item.CreatedDate;
-                    flowsheetVM.UpdatedDate = item.UpdatedDate;
-                    flowsheetVM.Patient = item.Patient;
-                    flowsheetVM.Doctor = item.Doctor;
-                    flowsheetVM.SpecialityType = item.SpecialityType;
-                    flowsheetVM.Approver = item.Approver;
+                    var flowsheetVM = new FlowSheetVM
+                    {
+                        FlowsheetId = item.FlowsheetId,
+                        CreatedBy = item.CreatedBy,
+                        UpdatedBy = item.UpdatedBy,
+                        CreatedDate = item.CreatedDate,
+                        UpdatedDate = item.UpdatedDate,
+                        Patient = item.Patient,
+                        Doctor = item.Doctor,
+                        SpecialityType = item.SpecialityType,
+                        Approver = item.Approver
+                    };
 
                     if (item.flowsheetNote != null)
                     {

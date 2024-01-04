@@ -31,19 +31,19 @@ builder.Services.AddDbContext<FlowSheetDbContext>(options =>
 builder.Services.AddDbContext<FlowSheetDbContext>(ServiceLifetime.Scoped);
 
 // Add services to the container.
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
-    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
-    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+//    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+//    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
 
-})
-.AddOktaWebApi(new OktaWebApiOptions()
-{
-    OktaDomain = "https://dev-31761595.okta.com/",
-    AuthorizationServerId = "ausdt9omn18w1dHU35d7",
-    Audience = "api://carehealth"
-});
+//})
+//.AddOktaWebApi(new OktaWebApiOptions()
+//{
+//    OktaDomain = "https://dev-31761595.okta.com/",
+//    AuthorizationServerId = "ausdt9omn18w1dHU35d7",
+//    Audience = "api://carehealth"
+//});
 
 builder.Services.AddAuthorization(options =>
 {
