@@ -152,10 +152,18 @@ namespace FlowSheetAPI.Controllers
         [HttpPost]
         [Route("AddConditionType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddSpecialityConditionType(SpecialityConditionType specialityConditionType)
+        public IActionResult AddSpecialityConditionType(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
         {
             try
             {
+                var speciality = _adminService.GetSpecialityTypeById(specialityConditionTypeViewModel.SpecialityTypeId).Result;
+                var specialityConditionType = new SpecialityConditionType
+                {
+                    SpecialityConditionTypeId = specialityConditionTypeViewModel.SpecialityConditionTypeId,
+                    SpecialityType = speciality,
+                    ConditionName = specialityConditionTypeViewModel.ConditionName,
+                    SpecilityConditionCode = specialityConditionTypeViewModel.SpecilityConditionCode,
+                };
                 var response = _adminService.Upsert(specialityConditionType);
                 return Ok(response);
             }
@@ -169,10 +177,17 @@ namespace FlowSheetAPI.Controllers
         [HttpPost]
         [Route("AddLabItem")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddLabItem(LabItem labItem)
+        public IActionResult AddLabItem(LabItemViewModel labItemViewModel)
         {
             try
             {
+                var labItem = new LabItem
+                {
+                    LabItemId = labItemViewModel.LabItemId,
+                    LabItemName = labItemViewModel.LabItemName,
+                    LabItemCode = labItemViewModel.LabItemCode
+                };
+
                 var response = _adminService.Upsert(labItem);
                 return Ok(response);
             }
@@ -186,10 +201,18 @@ namespace FlowSheetAPI.Controllers
         [HttpPost]
         [Route("AddLabItemSpeciality")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddLabItemSpeciality(LabItemSpeciality labItemSpeciality)
+        public IActionResult AddLabItemSpeciality(LabItemSpecialityViewModel labItemSpecialityViewModel)
         {
             try
             {
+                var speciality = _adminService.GetSpecialityTypeById(labItemSpecialityViewModel.SpecialityTypeId).Result;
+                var labItem = _adminService.GetLabItemById(labItemSpecialityViewModel.LabItemId).Result;
+                var labItemSpeciality = new LabItemSpeciality
+                {
+                    LabItemSpecialityId = labItemSpecialityViewModel.LabItemSpecialityId,
+                    SpecialityType = speciality,
+                    LabItem = labItem
+                };
                 var response = _adminService.Upsert(labItemSpeciality);
                 return Ok(response);
             }

@@ -51,6 +51,16 @@ namespace FlowSheetAPI.Services.Implementation
             return _unitOfWork.RegisterRepository<LabItemSpeciality>().Where(x => x.SpecialityType.SpecialityTypeId == specialityTypeId);
         }
 
+        public async Task<SpecialityType?> GetSpecialityTypeById(Guid specialityTypeId)
+        {
+            return await _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(specialityTypeId);
+        }
+
+        public async Task<LabItem?> GetLabItemById(Guid labItemId)
+        {
+            return await _unitOfWork.RegisterRepository<LabItem>().GetByIdAsync(labItemId);
+        }
+
         public Response Upsert(SpecialityConditionType? specialityConditionType)
         {
             var response = new Response();

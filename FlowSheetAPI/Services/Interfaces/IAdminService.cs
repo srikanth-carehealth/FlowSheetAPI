@@ -11,6 +11,8 @@ namespace FlowSheetAPI.Services.Interfaces
         public Task<IEnumerable<LabItem>> GetLabItems();
         public Task<IEnumerable<LabItemSpeciality>> GetLabItemSpeciality();
         public Task<IEnumerable<LabItemSpeciality>> GetLabItemBySpeciality(Guid specialityTypeId);
+        public Task<SpecialityType?> GetSpecialityTypeById(Guid specialityTypeId);
+        public Task<LabItem?> GetLabItemById(Guid labItemId);
         public Response Upsert(SpecialityConditionType? specialityConditionType);
         public Response Upsert(SpecialityType? specialityType);
         public Response Upsert(LabItem? labItem);
