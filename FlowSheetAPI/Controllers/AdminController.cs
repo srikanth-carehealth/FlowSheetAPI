@@ -156,11 +156,10 @@ namespace FlowSheetAPI.Controllers
         {
             try
             {
-                var speciality = _adminService.GetSpecialityTypeById(specialityConditionTypeViewModel.SpecialityTypeId).Result;
                 var specialityConditionType = new SpecialityConditionType
                 {
                     SpecialityConditionTypeId = specialityConditionTypeViewModel.SpecialityConditionTypeId,
-                    SpecialityType = speciality,
+                    SpecialityType = specialityConditionTypeViewModel.SpecialityType,
                     ConditionName = specialityConditionTypeViewModel.ConditionName,
                     SpecilityConditionCode = specialityConditionTypeViewModel.SpecilityConditionCode,
                 };
@@ -205,13 +204,11 @@ namespace FlowSheetAPI.Controllers
         {
             try
             {
-                var speciality = _adminService.GetSpecialityTypeById(labItemSpecialityViewModel.SpecialityTypeId).Result;
-                var labItem = _adminService.GetLabItemById(labItemSpecialityViewModel.LabItemId).Result;
                 var labItemSpeciality = new LabItemSpeciality
                 {
                     LabItemSpecialityId = labItemSpecialityViewModel.LabItemSpecialityId,
-                    SpecialityType = speciality,
-                    LabItem = labItem
+                    SpecialityType = labItemSpecialityViewModel.SpecialityType,
+                    LabItem = labItemSpecialityViewModel.LabItem,
                 };
                 var response = _adminService.Upsert(labItemSpeciality);
                 return Ok(response);
