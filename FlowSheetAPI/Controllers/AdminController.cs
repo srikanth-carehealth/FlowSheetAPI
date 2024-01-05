@@ -1,4 +1,5 @@
 ﻿using FlowSheetAPI.DomainModel;
+using FlowSheetAPI.Model;
 using FlowSheetAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -125,10 +126,19 @@ namespace FlowSheetAPI.Controllers
         [HttpPost]
         [Route("AddSpecialityType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddSpecialityType(SpecialityType specialityType)
+        public IActionResult AddSpecialityType(SpecialityTypeViewModel specialityTypeViewModel)
         {
             try
             {
+                var specialityType = new SpecialityType
+                {
+                    SpecialityTypeId = specialityTypeViewModel.SpecialityTypeId,
+                    ClientId = specialityTypeViewModel.ClientId,
+                    ClientName = specialityTypeViewModel.ClientName,
+                    SpecialityName = specialityTypeViewModel.SpecialityName,
+                    SpecialityCode = specialityTypeViewModel.SpecialityCode,
+                };
+
                 var response = _adminService.Upsert(specialityType);
                 return Ok(response);
             }
