@@ -29,7 +29,7 @@ namespace FlowSheetAPI.Repository.Implementation
             => Context.Set<TEntity>().Include(i => i);
 
         public async Task<TEntity?> GetByIdAsync(Guid id) =>
-            await Context.Set<TEntity>().FirstOrDefaultAsync(); //.Include(i => i)
+            await Context.Set<TEntity>().FindAsync(id); //.Include(i => i)
 
         public async Task<IEnumerable<TEntity>> GetAllAsync(params Expression<Func<TEntity, object>>[] includeProperties)
         {

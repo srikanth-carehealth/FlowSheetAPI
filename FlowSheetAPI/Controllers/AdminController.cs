@@ -63,7 +63,19 @@ namespace FlowSheetAPI.Controllers
             try
             {
                 var specialityTypes = await _adminService.GetSpecialityTypes();
-                return Ok(specialityTypes);
+
+                var specialityTypeViewModel = specialityTypes.Select(specialityType => new SpecialityTypeViewModel
+                {
+                    SpecialityTypeId = specialityType.SpecialityTypeId,
+                    ClientId = specialityType.ClientId,
+                    ClientName = specialityType.ClientName,
+                    SpecialityName = specialityType.SpecialityName,
+                    SpecialityCode = specialityType.SpecialityCode,
+                    IsActive = specialityType.IsActive,
+                    TotalApprovalCount = specialityType.TotalApprovalCount
+                });
+
+                return Ok(specialityTypeViewModel);
             }
             catch (Exception ex)
             {
@@ -126,20 +138,11 @@ namespace FlowSheetAPI.Controllers
         [HttpPost]
         [Route("AddSpecialityType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddSpecialityType(SpecialityTypeViewModel specialityTypeViewModel)
+        public async Task<IActionResult> AddSpecialityType(SpecialityTypeViewModel specialityTypeViewModel)
         {
             try
             {
-                var specialityType = new SpecialityType
-                {
-                    SpecialityTypeId = specialityTypeViewModel.SpecialityTypeId,
-                    ClientId = specialityTypeViewModel.ClientId,
-                    ClientName = specialityTypeViewModel.ClientName,
-                    SpecialityName = specialityTypeViewModel.SpecialityName,
-                    SpecialityCode = specialityTypeViewModel.SpecialityCode,
-                };
-
-                var response = _adminService.Upsert(specialityType);
+                var response = _adminService.Upsert(specialityTypeViewModel);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -150,20 +153,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
-        [Route("AddConditionType")]
+        [Route("AddConditionSpecialityType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddSpecialityConditionType(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
+        public IActionResult AddConditionSpecialityType(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
         {
             try
             {
-                var specialityConditionType = new SpecialityConditionType
-                {
-                    SpecialityConditionTypeId = specialityConditionTypeViewModel.SpecialityConditionTypeId,
-                    SpecialityType = specialityConditionTypeViewModel.SpecialityType,
-                    ConditionName = specialityConditionTypeViewModel.ConditionName,
-                    SpecilityConditionCode = specialityConditionTypeViewModel.SpecilityConditionCode,
-                };
-                var response = _adminService.Upsert(specialityConditionType);
+                var response = _adminService.Upsert(specialityConditionTypeViewModel);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -180,14 +176,7 @@ namespace FlowSheetAPI.Controllers
         {
             try
             {
-                var labItem = new LabItem
-                {
-                    LabItemId = labItemViewModel.LabItemId,
-                    LabItemName = labItemViewModel.LabItemName,
-                    LabItemCode = labItemViewModel.LabItemCode
-                };
-
-                var response = _adminService.Upsert(labItem);
+                var response = _adminService.Upsert(labItemViewModel);
                 return Ok(response);
             }
             catch (Exception ex)
@@ -198,19 +187,13 @@ namespace FlowSheetAPI.Controllers
         }
 
         [HttpPost]
-        [Route("AddLabItemSpeciality")]
+        [Route("AddLabItemSpecialityType")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public IActionResult AddLabItemSpeciality(LabItemSpecialityViewModel labItemSpecialityViewModel)
+        public IActionResult AddLabItemSpecialityType(LabItemSpecialityViewModel labItemSpecialityViewModel)
         {
             try
             {
-                var labItemSpeciality = new LabItemSpeciality
-                {
-                    LabItemSpecialityId = labItemSpecialityViewModel.LabItemSpecialityId,
-                    SpecialityType = labItemSpecialityViewModel.SpecialityType,
-                    LabItem = labItemSpecialityViewModel.LabItem,
-                };
-                var response = _adminService.Upsert(labItemSpeciality);
+                var response = _adminService.Upsert(labItemSpecialityViewModel);
                 return Ok(response);
             }
             catch (Exception ex)

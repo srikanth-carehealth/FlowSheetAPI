@@ -1,6 +1,9 @@
-﻿using System.Security.Claims;
+﻿using System.Diagnostics.Eventing.Reader;
+using System.Security.Claims;
+using Azure.Storage.Blobs.Models;
 using FlowSheetAPI.DataTransferObjects;
 using FlowSheetAPI.DomainModel;
+using FlowSheetAPI.Model;
 using FlowSheetAPI.Repository.Interfaces;
 using FlowSheetAPI.Services.Interfaces;
 
@@ -23,7 +26,7 @@ namespace FlowSheetAPI.Services.Implementation
 
         public Task<IEnumerable<SpecialityConditionType>> GetSpecialityConditionTypes()
         {
-            return _unitOfWork.RegisterRepository<SpecialityConditionType>().GetAllAsync();
+            return _unitOfWork.RegisterRepository<SpecialityConditionType>().GetAllAsync(i => i.SpecialityType);
         }
 
         public Task<IEnumerable<SpecialityConditionType>> GetConditionTypeBySpeciality(Guid specialityTypeId)
@@ -43,7 +46,7 @@ namespace FlowSheetAPI.Services.Implementation
 
         public Task<IEnumerable<LabItemSpeciality>> GetLabItemSpeciality()
         {
-            return _unitOfWork.RegisterRepository<LabItemSpeciality>().GetAllAsync();
+            return _unitOfWork.RegisterRepository<LabItemSpeciality>().GetAllAsync(i => i.SpecialityType, i => i.SpecialityConditionType, i => i.LabItem);
         }
 
         public Task<IEnumerable<LabItemSpeciality>> GetLabItemBySpeciality(Guid specialityTypeId)
@@ -61,7 +64,7 @@ namespace FlowSheetAPI.Services.Implementation
             return await _unitOfWork.RegisterRepository<LabItem>().GetByIdAsync(labItemId);
         }
 
-        public Response Upsert(SpecialityConditionType? specialityConditionType)
+        public Response Upsert(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
         {
             var response = new Response();
 
@@ -73,19 +76,19 @@ namespace FlowSheetAPI.Services.Implementation
                 // Begin a transaction.
                 _unitOfWork.BeginTransaction();
 
-                if (specialityConditionType?.SpecialityType != null)
+                if (specialityConditionTypeViewModel?.SpecialityTypeId != null)
                 {
                     // Get the speciality type.
-                    var specialityType = _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(specialityConditionType.SpecialityType.SpecialityTypeId).Result;
+                    var specialityType = _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(specialityConditionTypeViewModel.SpecialityTypeId).Result;
 
-                    if (specialityConditionType.SpecialityConditionTypeId == Guid.Empty)
+                    if (specialityConditionTypeViewModel.SpecialityConditionTypeId == Guid.Empty)
                     {
                         var newSpecialityConditionType = new SpecialityConditionType
                         {
-                            ClientId = specialityConditionType.ClientId,
-                            ClientName = specialityConditionType.ClientName,
-                            ConditionName = specialityConditionType.ConditionName,
-                            SpecilityConditionCode = specialityConditionType.SpecilityConditionCode,
+                            ClientId = specialityConditionTypeViewModel.ClientId,
+                            ClientName = specialityConditionTypeViewModel.ClientName,
+                            ConditionName = specialityConditionTypeViewModel.ConditionName,
+                            SpecilityConditionCode = specialityConditionTypeViewModel.SpecilityConditionCode,
                             IsActive = true,
                             SpecialityType = specialityType,
                             CreatedBy = loggedInUser,
@@ -97,9 +100,25 @@ namespace FlowSheetAPI.Services.Implementation
                         // Upsert the speciality condition type.
                         _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(newSpecialityConditionType);
                     }
+                    else
+                    {
+                        // Get the speciality condition type.
+                        var specialityConditionTypeData = _unitOfWork.RegisterRepository<SpecialityConditionType>().GetByIdAsync(specialityConditionTypeViewModel.SpecialityConditionTypeId).Result;
 
-                    // Upsert the speciality condition type.
-                    _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(specialityConditionType);
+                        // Update the speciality condition type.
+                        if (specialityConditionTypeData != null)
+                        {
+                            specialityConditionTypeData.ClientId = specialityConditionTypeViewModel.ClientId;
+                            specialityConditionTypeData.ClientName = specialityConditionTypeViewModel.ClientName;
+                            specialityConditionTypeData.ConditionName = specialityConditionTypeViewModel.ConditionName;
+                            specialityConditionTypeData.SpecilityConditionCode = specialityConditionTypeViewModel.SpecilityConditionCode;
+                            specialityConditionTypeData.IsActive = specialityConditionTypeViewModel.IsActive;
+                            specialityConditionTypeData.SpecialityType = specialityType;
+
+                            // Upsert the speciality condition type.
+                            _unitOfWork.RegisterRepository<SpecialityConditionType>().UpsertAsync(specialityConditionTypeData);
+                        }
+                    }
 
                     // Save the changes to the database.
                     _unitOfWork.SaveChanges();
@@ -112,7 +131,6 @@ namespace FlowSheetAPI.Services.Implementation
 
                     return response;
                 }
-
                 response.Success = false;
                 response.Message = "Speciality type data cannot be null.";
                 return response;
@@ -127,7 +145,7 @@ namespace FlowSheetAPI.Services.Implementation
             }
         }
 
-        public Response Upsert(SpecialityType? specialityType)
+        public Response Upsert(SpecialityTypeViewModel? specialityTypeViewModel)
         {
             var response = new Response();
 
@@ -139,17 +157,17 @@ namespace FlowSheetAPI.Services.Implementation
                 // Begin a transaction.
                 _unitOfWork.BeginTransaction();
 
-                if (specialityType != null)
+                if (specialityTypeViewModel != null)
                 {
-                    if (specialityType.SpecialityTypeId == Guid.Empty)
+                    if (specialityTypeViewModel.SpecialityTypeId == Guid.Empty)
                     {
                         var newSpecialityType = new SpecialityType
                         {
-                            ClientId = specialityType.ClientId,
-                            ClientName = specialityType.ClientName,
-                            SpecialityCode = specialityType.SpecialityCode,
-                            SpecialityName = specialityType.SpecialityName,
-                            TotalApprovalCount = specialityType.TotalApprovalCount,
+                            ClientId = specialityTypeViewModel.ClientId,
+                            ClientName = specialityTypeViewModel.ClientName,
+                            SpecialityCode = specialityTypeViewModel.SpecialityCode,
+                            SpecialityName = specialityTypeViewModel.SpecialityName,
+                            TotalApprovalCount = specialityTypeViewModel.TotalApprovalCount,
                             IsActive = true,
                             CreatedBy = loggedInUser,
                             CreatedDate = DateTime.UtcNow,
@@ -160,9 +178,25 @@ namespace FlowSheetAPI.Services.Implementation
                         // Upsert the speciality type.
                         _unitOfWork.RegisterRepository<SpecialityType>().UpsertAsync(newSpecialityType);
                     }
+                    else
+                    {
+                        // Get the speciality type.
+                        var specialityType = _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(specialityTypeViewModel.SpecialityTypeId).Result;
 
-                    // Upsert the speciality type.
-                    _unitOfWork.RegisterRepository<SpecialityType>().UpsertAsync(specialityType);
+                        // Update the speciality type.
+                        if (specialityType != null)
+                        {
+                            specialityType.ClientId = specialityTypeViewModel.ClientId;
+                            specialityType.ClientName = specialityTypeViewModel.ClientName;
+                            specialityType.SpecialityCode = specialityTypeViewModel.SpecialityCode;
+                            specialityType.SpecialityName = specialityTypeViewModel.SpecialityName;
+                            specialityType.TotalApprovalCount = specialityTypeViewModel.TotalApprovalCount;
+                            specialityType.IsActive = specialityTypeViewModel.IsActive;
+
+                            // Upsert the speciality type.
+                            _unitOfWork.RegisterRepository<SpecialityType>().UpsertAsync(specialityType);
+                        }
+                    }
 
                     // Save the changes to the database.
                     _unitOfWork.SaveChanges();
@@ -182,38 +216,59 @@ namespace FlowSheetAPI.Services.Implementation
             }
             catch (Exception e)
             {
-                return response;
+                _unitOfWork.RollbackTransaction();
+                _logger.LogError("Error occurred while saving Speciality item data. " + e);
+                var errorResponse = new Response { Success = false, Message = "Error occurred while saving Speciality item data." };
+                return errorResponse;
             }
         }
 
-        public Response Upsert(LabItem? labItem)
+        public Response Upsert(LabItemViewModel? labItemViewModel)
         {
             try
             {
+                var response = new Response();
+
+                // Get the current logged in user id
+                var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                                   "System";
 
                 // Begin a transaction.
                 _unitOfWork.BeginTransaction();
-                if (labItem != null)
+                if (labItemViewModel != null)
                 {
-                    if (labItem.LabItemId == Guid.Empty)
+                    if (labItemViewModel.LabItemId == Guid.Empty)
                     {
                         var newLabItem = new LabItem
                         {
-                            LabItemName = labItem.LabItemName,
-                            LabItemCode = labItem.LabItemCode,
+                            LabItemName = labItemViewModel.LabItemName,
+                            LabItemCode = labItemViewModel.LabItemCode,
                             IsActive = true,
-                            CreatedBy = "System",
+                            CreatedBy = loggedInUser,
                             CreatedDate = DateTime.UtcNow,
-                            UpdatedBy = "System",
+                            UpdatedBy = loggedInUser,
                             UpdatedDate = DateTime.UtcNow
                         };
 
                         // Upsert the lab item.
                         _unitOfWork.RegisterRepository<LabItem>().UpsertAsync(newLabItem);
                     }
+                    else
+                    {
+                        // Get the lab item.
+                        var labItem = _unitOfWork.RegisterRepository<LabItem>().GetByIdAsync(labItemViewModel.LabItemId).Result;
 
-                    // Upsert the lab item.
-                    _unitOfWork.RegisterRepository<LabItem>().UpsertAsync(labItem);
+                        // Update the lab item.
+                        if (labItem != null)
+                        {
+                            labItem.LabItemName = labItemViewModel.LabItemName;
+                            labItem.LabItemCode = labItemViewModel.LabItemCode;
+                            labItem.IsActive = labItemViewModel.IsActive;
+
+                            // Upsert the lab item.
+                            _unitOfWork.RegisterRepository<LabItem>().UpsertAsync(labItem);
+                        }
+                    }
 
                     // Save the changes to the database.
                     _unitOfWork.SaveChanges();
@@ -221,9 +276,11 @@ namespace FlowSheetAPI.Services.Implementation
                     // Commit the transaction.
                     _unitOfWork.CommitTransaction();
 
-                    var response = new Response { Success = true, Message = "Lab item data saved successfully." };
+                    response.Success = true;
+                    response.Message = "Lab item data saved successfully.";
                     return response;
                 }
+
                 var errorResponse = new Response { Success = false, Message = "Lab item data cannot be null." };
                 return errorResponse;
             }
@@ -236,28 +293,45 @@ namespace FlowSheetAPI.Services.Implementation
             }
         }
 
-        public Response Upsert(LabItemSpeciality? labItemSpeciality)
+        public Response Upsert(LabItemSpecialityViewModel? labItemSpecialityViewModel)
         {
             try
             {
+                var response = new Response();
+
+                // Get the current logged in user id
+                var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                                   "System";
+
                 // Begin a transaction.
                 _unitOfWork.BeginTransaction();
 
-                if (labItemSpeciality != null)
+                if (labItemSpecialityViewModel != null)
                 {
-                    if (labItemSpeciality.LabItemSpecialityId == Guid.Empty)
+
+                    // Get the lab item.
+                    var labItem = _unitOfWork.RegisterRepository<LabItem>().GetByIdAsync(labItemSpecialityViewModel.LabItemId).Result;
+
+                    // Get the speciality type.
+                    var specialityType = _unitOfWork.RegisterRepository<SpecialityType>().GetByIdAsync(labItemSpecialityViewModel.SpecialityTypeId).Result;
+
+                    // Get the Speciality condition type.
+                    var specialityConditionType = _unitOfWork.RegisterRepository<SpecialityConditionType>().GetByIdAsync(labItemSpecialityViewModel.SpecialityConditionTypeId).Result;
+
+                    if (labItemSpecialityViewModel.LabItemSpecialityId == Guid.Empty)
                     {
                         var newLabItemSpeciality = new LabItemSpeciality
                         {
                             LabItemSpecialityId = Guid.NewGuid(),
-                            LabItem = labItemSpeciality.LabItem,
-                            SpecialityType = labItemSpeciality.SpecialityType,
-                            ClientId = labItemSpeciality.ClientId,
-                            ClientName = labItemSpeciality.ClientName,
+                            LabItem = labItem,
+                            SpecialityType = specialityType,
+                            SpecialityConditionType = specialityConditionType,
+                            ClientId = labItemSpecialityViewModel.ClientId,
+                            ClientName = labItemSpecialityViewModel.ClientName,
                             IsActive = true,
-                            CreatedBy = "System",
+                            CreatedBy = loggedInUser,
                             CreatedDate = DateTime.UtcNow,
-                            UpdatedBy = "System",
+                            UpdatedBy = loggedInUser,
                             UpdatedDate = DateTime.UtcNow
                         };
 
@@ -265,8 +339,25 @@ namespace FlowSheetAPI.Services.Implementation
                         _unitOfWork.RegisterRepository<LabItemSpeciality>().UpsertAsync(newLabItemSpeciality);
                     }
 
-                    // Upsert the lab item speciality.
-                    _unitOfWork.RegisterRepository<LabItemSpeciality>().UpsertAsync(labItemSpeciality);
+                    else
+                    {
+                        // Get the lab item speciality.
+                        var labItemSpecialityData = _unitOfWork.RegisterRepository<LabItemSpeciality>().GetByIdAsync(labItemSpecialityViewModel.LabItemSpecialityId).Result;
+
+                        // Update the lab item speciality.
+                        if (labItemSpecialityData != null)
+                        {
+                            labItemSpecialityData.LabItem = labItem;
+                            labItemSpecialityData.SpecialityType = specialityType;
+                            labItemSpecialityData.SpecialityConditionType = specialityConditionType;
+                            labItemSpecialityData.ClientId = labItemSpecialityViewModel.ClientId;
+                            labItemSpecialityData.ClientName = labItemSpecialityViewModel.ClientName;
+                            labItemSpecialityData.IsActive = labItemSpecialityViewModel.IsActive;
+
+                            // Upsert the lab item speciality.
+                            _unitOfWork.RegisterRepository<LabItemSpeciality>().UpsertAsync(labItemSpecialityData);
+                        }
+                    }
 
                     // Save the changes to the database.
                     _unitOfWork.SaveChanges();
@@ -274,8 +365,8 @@ namespace FlowSheetAPI.Services.Implementation
                     // Commit the transaction.
                     _unitOfWork.CommitTransaction();
 
-                    var response = new Response
-                    { Success = true, Message = "Lab item speciality data saved successfully." };
+                    response.Success = true;
+                    response.Message = "Lab item speciality data saved successfully.";
                     return response;
                 }
 

@@ -1,6 +1,4 @@
-﻿using FlowSheetAPI.DomainModel;
-
-namespace FlowSheetAPI.Model
+﻿namespace FlowSheetAPI.Model
 {
     public class SpecialityConditionTypeViewModel
     {
@@ -10,6 +8,6 @@ namespace FlowSheetAPI.Model
         public bool IsActive { get; set; }
         public string ClientId { get; set; }
         public string ClientName { get; set; }
-        public SpecialityType SpecialityType { get; set; }
+        public Guid SpecialityTypeId { get; set; }
     }
 }

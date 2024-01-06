@@ -7,5 +7,7 @@
         public string ClientName { get; set; }
         public string SpecialityName { get; set; }
         public string SpecialityCode { get; set; }
+        public bool IsActive { get; set; }
+        public int TotalApprovalCount { get; set; }
     }
 }
