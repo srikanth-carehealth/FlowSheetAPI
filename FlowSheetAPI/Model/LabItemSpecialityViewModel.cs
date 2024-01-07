@@ -1,6 +1,4 @@
-﻿using FlowSheetAPI.DomainModel;
-
-namespace FlowSheetAPI.Model
+﻿namespace FlowSheetAPI.Model
 {
     public class LabItemSpecialityViewModel
     {

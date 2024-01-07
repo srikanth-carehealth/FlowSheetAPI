@@ -1,7 +1,5 @@
-﻿using FlowSheetAPI.DomainModel;
-using FlowSheetAPI.Model;
+﻿using FlowSheetAPI.Model;
 using FlowSheetAPI.Services.Interfaces;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlowSheetAPI.Controllers
