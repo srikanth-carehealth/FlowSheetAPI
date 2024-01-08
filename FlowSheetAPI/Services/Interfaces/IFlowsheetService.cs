@@ -10,6 +10,7 @@ namespace FlowSheetAPI.Services.Interfaces
         public Task<FlowSheetWrapper> GetByPatient(int ehrPatientId);
         public Task<FlowSheetWrapper> GetByDoctorAndPatient(string ehrDoctorUserName, int ehrPatientId);
         public Response Upsert(Flowsheet? flowsheet);
+        public Response InsertFlowSheet(FlowSheetIM? inputModel);
         public Task<FlowSheetWrapper> GetByDoctor(string ehrUserName);
         public Task<FlowSheetWrapper> GetBySpecialityConditionAndPatient(string conditionSpecialityType, int ehrPatientId);
     }

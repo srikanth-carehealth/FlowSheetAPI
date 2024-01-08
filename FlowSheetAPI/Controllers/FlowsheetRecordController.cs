@@ -1,4 +1,5 @@
-﻿using FlowSheetAPI.DomainModel;
+﻿using FlowSheetAPI.DataTransferObjects;
+using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -132,6 +133,30 @@ namespace FlowSheetAPI.Controllers
 
                 //Insert a record into the Flowsheet history table
                 var response = _flowsheetService.Upsert(flowsheet);
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while saving flowsheet data. " + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        public IActionResult InsertFlowSheet([FromBody] FlowSheetIM? flowsheet)
+        {
+            try
+            {
+                if (flowsheet == null)
+                {
+                    _logger.LogError("Flowsheet object sent from client is null.");
+                    return BadRequest("Invalid data");
+                }
+
+                //Insert a record into the Flowsheet history table
+                var response = _flowsheetService.InsertFlowSheet(flowsheet);
 
                 return Ok(response);
             }
