@@ -6,6 +6,8 @@ using FlowSheetAPI.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authorization;
+using Okta.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 

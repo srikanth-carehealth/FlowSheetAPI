@@ -6,7 +6,7 @@ namespace FlowSheetAPI.DataTransferObjects
     {
         public SpecialityType SpecialityType { get; set; }
         public SpecialityConditionType SpecialityConditionType { get; set; }
-        public IEnumerable<FlowsheetTemplate>? FlowsheetColumns { get; set; }
+        public IEnumerable<string>? FlowsheetColumns { get; set; }
         public IEnumerable<FlowSheetVM> Flowsheets { get; set; }
     }
 }
