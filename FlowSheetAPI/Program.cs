@@ -29,23 +29,23 @@ builder.Services.AddDbContext<FlowSheetDbContext>(options =>
 builder.Services.AddDbContext<FlowSheetDbContext>(ServiceLifetime.Scoped);
 
 // Add services to the container.
-//builder.Services.AddAuthentication(options =>
-//{
-//    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
-//    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
-//    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
-//})
-//.AddOktaWebApi(new OktaWebApiOptions()
-//{
-//    OktaDomain = "https://carehealthai.okta.com/",
-//    AuthorizationServerId = "aus1olzi3kzoGICrr1d8",
-//    Audience = "api://carehealth"
-//});
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultChallengeScheme = OktaDefaults.ApiAuthenticationScheme;
+    options.DefaultSignInScheme = OktaDefaults.ApiAuthenticationScheme;
+})
+.AddOktaWebApi(new OktaWebApiOptions()
+{
+    OktaDomain = "https://carehealthai.okta.com/",
+    AuthorizationServerId = "aus1olzi3kzoGICrr1d8",
+    Audience = "api://carehealth"
+});
 
-//builder.Services.AddAuthorization(options =>
-//{
-//    options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
-//});
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(OktaDefaults.ApiAuthenticationScheme).RequireAuthenticatedUser().Build();
+});
 
 // Load Serilog configuration from appsettings.json
 var configuration = new ConfigurationBuilder()
