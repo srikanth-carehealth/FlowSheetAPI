@@ -14,9 +14,15 @@ namespace FlowSheetAPI.Services.Interfaces
         public Task<IEnumerable<LabItemSpeciality>> GetLabItemBySpeciality(Guid specialityTypeId);
         public Task<SpecialityType?> GetSpecialityTypeById(Guid specialityTypeId);
         public Task<LabItem?> GetLabItemById(Guid labItemId);
+        public Task<IEnumerable<FlowsheetApprover>> GetFlowsheetApprovers();
+        public Task<IEnumerable<FlowsheetTemplate>> GetFlowsheetTemplates();
         public Response Upsert(SpecialityConditionTypeViewModel specialityConditionTypeViewModel);
         public Response Upsert(SpecialityTypeViewModel specialityTypeViewModel);
         public Response Upsert(LabItemViewModel? labItemViewModel);
         public Response Upsert(LabItemSpecialityViewModel? labItemSpecialityViewModel);
+        public Response Upsert(FlowsheetApproverViewModel? flowsheetApproverViewModel);
+        public Response Upsert(FlowsheetTemplateViewModel? flowSheetColumnViewModel);
+
+        
     }
 }

@@ -145,7 +145,7 @@ namespace FlowSheetAPI.Controllers
 
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
-        public IActionResult InsertFlowSheet([FromBody] FlowSheetIM? flowsheet)
+        public IActionResult AddFlowSheet([FromBody] FlowSheetIM? flowsheet)
         {
             try
             {

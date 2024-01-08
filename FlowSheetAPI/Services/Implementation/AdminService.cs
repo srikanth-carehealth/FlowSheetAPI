@@ -62,6 +62,16 @@ namespace FlowSheetAPI.Services.Implementation
             return await _unitOfWork.RegisterRepository<LabItem>().GetByIdAsync(labItemId);
         }
 
+        public Task<IEnumerable<FlowsheetTemplate>> GetFlowsheetTemplates()
+        {
+            return _unitOfWork.RegisterRepository<FlowsheetTemplate>().GetAllAsync();
+        }
+
+        public Task<IEnumerable<FlowsheetApprover>> GetFlowsheetApprovers()
+        {
+            return _unitOfWork.RegisterRepository<FlowsheetApprover>().GetAllAsync();
+        }
+
         public Response Upsert(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
         {
             var response = new Response();
@@ -377,6 +387,166 @@ namespace FlowSheetAPI.Services.Implementation
                 _unitOfWork.RollbackTransaction();
                 _logger.LogError("Error occurred while saving lab item speciality data. " + e);
                 var errorResponse = new Response { Success = false, Message = "Error occurred while saving lab item speciality data." };
+                return errorResponse;
+            }
+        }
+
+        public Response Upsert(FlowsheetApproverViewModel? flowsheetApproverViewModel)
+        {
+            try
+            {
+                var response = new Response();
+
+                // Get the current logged in user id
+                var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                                   "System";
+
+                // Begin a transaction.
+                _unitOfWork.BeginTransaction();
+
+                if (flowsheetApproverViewModel != null)
+                {
+                    if (flowsheetApproverViewModel.FlowsheetApproverId == Guid.Empty)
+                    {
+                        var newFlowsheetApprover = new FlowsheetApprover
+                        {
+                            FlowsheetApproverId = Guid.NewGuid(),
+                            FirstName = flowsheetApproverViewModel.FirstName,
+                            MiddleName = flowsheetApproverViewModel.MiddleName,
+                            LastName = flowsheetApproverViewModel.LastName,
+                            Initial = flowsheetApproverViewModel.Initial,
+                            Designation = flowsheetApproverViewModel.Designation,
+                            Telephone = flowsheetApproverViewModel.Telephone,
+                            Fax = flowsheetApproverViewModel.Fax,
+                            Address = flowsheetApproverViewModel.Address,
+                            IsActive = true,
+                            CreatedBy = loggedInUser,
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = loggedInUser,
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the flowsheet approver.
+                        _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(newFlowsheetApprover);
+                    }
+                    else
+                    {
+                        // Get the flowsheet approver.
+                        var flowsheetApprover = _unitOfWork.RegisterRepository<FlowsheetApprover>()
+                            .GetByIdAsync(flowsheetApproverViewModel.FlowsheetApproverId).Result;
+
+                        // Update the flowsheet approver.
+                        if (flowsheetApprover != null)
+                        {
+                            flowsheetApprover.FirstName = flowsheetApproverViewModel.FirstName;
+                            flowsheetApprover.MiddleName = flowsheetApproverViewModel.MiddleName;
+                            flowsheetApprover.LastName = flowsheetApproverViewModel.LastName;
+                            flowsheetApprover.Initial = flowsheetApproverViewModel.Initial;
+                            flowsheetApprover.Designation = flowsheetApproverViewModel.Designation;
+                            flowsheetApprover.Telephone = flowsheetApproverViewModel.Telephone;
+                            flowsheetApprover.Fax = flowsheetApproverViewModel.Fax;
+                            flowsheetApprover.Address = flowsheetApproverViewModel.Address;
+                            flowsheetApprover.IsActive = flowsheetApproverViewModel.IsActive;
+
+                            // Upsert the flowsheet approver.
+                            _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(flowsheetApprover);
+
+                            // Save the changes to the database.
+                            _unitOfWork.SaveChanges();
+
+                            // Commit the transaction.
+                            _unitOfWork.CommitTransaction();
+
+                            response.Success = true;
+                            response.Message = "Flowsheet approver data saved successfully.";
+
+                            return response;
+                        }
+                    }
+                }
+
+                var errorResponse = new Response { Success = false, Message = "Flowsheet approver data cannot be null." };
+                return errorResponse;
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.RollbackTransaction();
+                _logger.LogError("Error occurred while saving flowsheet approver data. " + e);
+                var errorResponse = new Response { Success = false, Message = "Error occurred while saving flowsheet approver data." };
+                return errorResponse;
+            }
+        }
+
+        public Response Upsert(FlowsheetTemplateViewModel? flowSheetColumnViewModel)
+        {
+            try
+            {
+                var response = new Response();
+
+                // Get the current logged in user id
+                var loggedInUser = _httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value ??
+                                   "System";
+
+                // Begin a transaction.
+                _unitOfWork.BeginTransaction();
+
+                if (flowSheetColumnViewModel != null)
+                {
+                    if (flowSheetColumnViewModel.FlowsheetTemplateId == Guid.Empty)
+                    {
+                        var newFlowsheetTemplate = new FlowsheetTemplate
+                        {
+                            FlowsheetTemplateId = Guid.NewGuid(),
+                            ColumnName = flowSheetColumnViewModel.ColumnName,
+                            ClientId = flowSheetColumnViewModel.ClientId,
+                            ClientName = flowSheetColumnViewModel.ClientName,
+                            CreatedBy = loggedInUser,
+                            CreatedDate = DateTime.UtcNow,
+                            UpdatedBy = loggedInUser,
+                            UpdatedDate = DateTime.UtcNow
+                        };
+
+                        // Upsert the flowsheet template.
+                        _unitOfWork.RegisterRepository<FlowsheetTemplate>().UpsertAsync(newFlowsheetTemplate);
+                    }
+                    else
+                    {
+                        // Get the flowsheet template.
+                        var flowsheetTemplate = _unitOfWork.RegisterRepository<FlowsheetTemplate>()
+                            .GetByIdAsync(flowSheetColumnViewModel.FlowsheetTemplateId).Result;
+
+                        // Update the flowsheet template.
+                        if (flowsheetTemplate != null)
+                        {
+                            flowsheetTemplate.ColumnName = flowSheetColumnViewModel.ColumnName;
+                            flowsheetTemplate.ClientId = flowSheetColumnViewModel.ClientId;
+                            flowsheetTemplate.ClientName = flowSheetColumnViewModel.ClientName;
+
+                            // Upsert the flowsheet template.
+                            _unitOfWork.RegisterRepository<FlowsheetTemplate>().UpsertAsync(flowsheetTemplate);
+                        }
+                    }
+
+                    // Save the changes to the database.
+                    _unitOfWork.SaveChanges();
+
+                    // Commit the transaction.
+                    _unitOfWork.CommitTransaction();
+
+                    response.Success = true;
+                    response.Message = "Flowsheet template data saved successfully.";
+
+                    return response;
+                }
+
+                var errorResponse = new Response { Success = false, Message = "Flowsheet template data cannot be null." };
+                return errorResponse;
+            }
+            catch (Exception e)
+            {
+                _unitOfWork.RollbackTransaction();
+                _logger.LogError("Error occurred while saving flowsheet template data. " + e);
+                var errorResponse = new Response { Success = false, Message = "Error occurred while saving flowsheet template data." };
                 return errorResponse;
             }
         }

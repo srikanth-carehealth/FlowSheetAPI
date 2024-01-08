@@ -200,5 +200,73 @@ namespace FlowSheetAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError);
             }
         }
+
+        [HttpPost]
+        [Route("AddFlowsheetApprover")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddFlowsheetApprover(FlowsheetApproverViewModel flowsheetApproverViewModel)
+        {
+            try
+            {
+                var response = _adminService.Upsert(flowsheetApproverViewModel);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding flowsheet approver" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFlowsheetApprovers")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFlowsheetApprovers()
+        {
+            try
+            {
+                var flowsheetApprovers = await _adminService.GetFlowsheetApprovers();
+                return Ok(flowsheetApprovers);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while fetching flowsheet approvers" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpGet]
+        [Route("GetFlowsheetTemplate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<IActionResult> GetFlowsheetTemplate()
+        {
+            try
+            {
+                var flowsheetTemplate = await _adminService.GetFlowsheetTemplates();
+                return Ok(flowsheetTemplate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while fetching flowsheet template" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
+
+        [HttpPost]
+        [Route("AddFlowsheetTemplate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public IActionResult AddFlowsheetTemplate(FlowsheetTemplateViewModel flowsheetTemplateViewModel)
+        {
+            try
+            {
+                var response = _adminService.Upsert(flowsheetTemplateViewModel);
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Error occurred while adding flowsheet template" + ex);
+                return StatusCode(StatusCodes.Status500InternalServerError);
+            }
+        }
     }
 }
