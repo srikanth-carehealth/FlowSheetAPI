@@ -33,10 +33,10 @@ namespace FlowSheetAPI.Services.Implementation
             var list = Enumerable.Empty<Flowsheet>();
             list = await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync(e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<string>();
+            var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(col.ColumnName);
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
             }
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
@@ -52,10 +52,10 @@ namespace FlowSheetAPI.Services.Implementation
             var list = new List<Flowsheet>();
             list.Add(await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == id, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver)));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<string>();
+            var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(col.ColumnName);
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
             }
 
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
@@ -76,10 +76,10 @@ namespace FlowSheetAPI.Services.Implementation
             {
                 list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId, e => e.Doctor, e => e.SpecialityType, e => e.Approver));
                 var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-                var colArr = new List<string>();
+                var colArr = new List<FlowSheetColumns>();
                 foreach (var col in columns.Result)
                 {
-                    colArr.Add(col.ColumnName);
+                    colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
                 }
 
                 flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
@@ -270,10 +270,10 @@ namespace FlowSheetAPI.Services.Implementation
 
             list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Doctor.DoctorId == doctor.DoctorId, e => e.Patient, ehrUserName => ehrUserName.SpecialityType, e => e.Approver));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<string>();
+            var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(col.ColumnName);
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
             }
 
             var flowsheets = list.ToList();
@@ -295,10 +295,10 @@ namespace FlowSheetAPI.Services.Implementation
             if (patient == null || doctor == null) return flowSheetWrapper;
             list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.Doctor.DoctorId == doctor.DoctorId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<string>();
+            var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(col.ColumnName);
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
             }
 
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
@@ -317,10 +317,10 @@ namespace FlowSheetAPI.Services.Implementation
 
             var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityConditionType.ConditionName == conditionSpecialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver, e => e.SpecialityConditionType));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.SpecialityConditionTypeId == list.FirstOrDefault().SpecialityConditionType.SpecialityConditionTypeId));
-            var colArr = new List<string>();
+            var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(col.ColumnName);
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ","")));
             }
 
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
