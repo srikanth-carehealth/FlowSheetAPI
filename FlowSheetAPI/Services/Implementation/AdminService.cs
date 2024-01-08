@@ -69,7 +69,7 @@ namespace FlowSheetAPI.Services.Implementation
 
         public Task<IEnumerable<FlowsheetApprover>> GetFlowsheetApprovers()
         {
-            return _unitOfWork.RegisterRepository<FlowsheetApprover>().GetAllAsync();
+            return _unitOfWork.RegisterRepository<FlowsheetApprover>().GetAllAsync(i => i.SpecialityType, i => i.SpecialityConditionType);
         }
 
         public Response Upsert(SpecialityConditionTypeViewModel specialityConditionTypeViewModel)
