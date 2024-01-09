@@ -64,7 +64,7 @@ namespace FlowSheetAPI.Services.Implementation
 
         public Task<IEnumerable<FlowsheetTemplate>> GetFlowsheetTemplates()
         {
-            return _unitOfWork.RegisterRepository<FlowsheetTemplate>().GetAllAsync();
+            return _unitOfWork.RegisterRepository<FlowsheetTemplate>().GetAllAsync(i => i.SpecialityType, i => i.SpecialityConditionType);
         }
 
         public Task<IEnumerable<FlowsheetApprover>> GetFlowsheetApprovers()
@@ -492,6 +492,13 @@ namespace FlowSheetAPI.Services.Implementation
 
                 if (flowSheetColumnViewModel != null)
                 {
+                    var specialityType = _unitOfWork.RegisterRepository<SpecialityType>()
+                        .GetByIdAsync(flowSheetColumnViewModel.SpecialityTypeId).Result;
+
+                    var specialityConditionType = _unitOfWork.RegisterRepository<SpecialityConditionType>()
+                        .GetByIdAsync(flowSheetColumnViewModel.SpecialityConditionTypeId).Result;
+
+
                     if (flowSheetColumnViewModel.FlowsheetTemplateId == Guid.Empty)
                     {
                         var newFlowsheetTemplate = new FlowsheetTemplate
@@ -500,6 +507,9 @@ namespace FlowSheetAPI.Services.Implementation
                             ColumnName = flowSheetColumnViewModel.ColumnName,
                             ClientId = flowSheetColumnViewModel.ClientId,
                             ClientName = flowSheetColumnViewModel.ClientName,
+                            IsActive = true,
+                            SpecialityType = specialityType,
+                            SpecialityConditionType = specialityConditionType,
                             CreatedBy = loggedInUser,
                             CreatedDate = DateTime.UtcNow,
                             UpdatedBy = loggedInUser,
@@ -521,6 +531,9 @@ namespace FlowSheetAPI.Services.Implementation
                             flowsheetTemplate.ColumnName = flowSheetColumnViewModel.ColumnName;
                             flowsheetTemplate.ClientId = flowSheetColumnViewModel.ClientId;
                             flowsheetTemplate.ClientName = flowSheetColumnViewModel.ClientName;
+                            flowsheetTemplate.IsActive = flowSheetColumnViewModel.IsActive;
+                            flowsheetTemplate.SpecialityType = specialityType;
+                            flowsheetTemplate.SpecialityConditionType = specialityConditionType;
 
                             // Upsert the flowsheet template.
                             _unitOfWork.RegisterRepository<FlowsheetTemplate>().UpsertAsync(flowsheetTemplate);

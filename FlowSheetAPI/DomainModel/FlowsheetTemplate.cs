@@ -26,6 +26,10 @@ namespace FlowSheetAPI.DomainModel
         public string ClientName { get; set; }
 
         [Required]
+        [Column("is_active")]
+        public bool IsActive { get; set; }
+
+        [Required]
         [DataMember]
         [Column("created_by")]
         public string CreatedBy { get; set; }
