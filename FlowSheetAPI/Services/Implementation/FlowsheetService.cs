@@ -316,15 +316,27 @@ namespace FlowSheetAPI.Services.Implementation
             if (patient == null) return flowSheetWrapper;
 
             var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityConditionType.ConditionName == conditionSpecialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver, e => e.SpecialityConditionType));
-            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.SpecialityConditionTypeId == list.FirstOrDefault().SpecialityConditionType.SpecialityConditionTypeId));
+            var flowsheets = list.ToList();
+            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
+
             var colArr = new List<FlowSheetColumns>();
             foreach (var col in columns.Result)
             {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ","")));
+                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
             }
 
-            flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
-            flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
+            if (flowsheets.Count == 0)
+            {
+                var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType, x => x.SpecialityType).FirstOrDefault());
+                var specialityType = specialityConditionType.SpecialityType;
+                flowSheetWrapper.SpecialityType = specialityType;
+            }
+            else
+            {
+                flowSheetWrapper.SpecialityType = flowsheets.FirstOrDefault().SpecialityType;
+            }
+
+            flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
             flowSheetWrapper.FlowsheetColumns = colArr;
 
             return flowSheetWrapper;
