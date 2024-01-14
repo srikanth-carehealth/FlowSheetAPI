@@ -93,6 +93,12 @@ namespace FlowSheetAPI.Services.Implementation
         public Response InsertFlowSheet(FlowSheetIM? inputModel)
         {
             var flowsheet = new Flowsheet();
+
+            if (inputModel.FlowsheetId != null)
+            {
+                flowsheet = _unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == inputModel.FlowsheetId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
+            }
+
             var response = new Response();
             try
             {

@@ -4,6 +4,7 @@ namespace FlowSheetAPI.DataTransferObjects
 {
     public class FlowSheetIM
     {
+        public Guid? FlowsheetId { get; set; }
         public string EhrDoctorUserName { get; set; }
 
         public int EhrPatientId { get; set; }
