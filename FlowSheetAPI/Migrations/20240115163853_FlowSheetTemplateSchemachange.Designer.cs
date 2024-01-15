@@ -3,6 +3,7 @@ using System;
 using FlowSheetAPI.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace FlowSheetAPI.Migrations
 {
     [DbContext(typeof(FlowSheetDbContext))]
-    partial class FlowSheetDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240115163853_FlowSheetTemplateSchemachange")]
+    partial class FlowSheetTemplateSchemachange
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -361,11 +364,6 @@ namespace FlowSheetAPI.Migrations
                         .HasColumnType("text")
                         .HasColumnName("client_name");
 
-                    b.Property<int?>("ColumnDisplayOrder")
-                        .IsRequired()
-                        .HasColumnType("integer")
-                        .HasColumnName("column_display_order");
-
                     b.Property<string>("ColumnId")
                         .IsRequired()
                         .HasColumnType("text")
@@ -375,6 +373,11 @@ namespace FlowSheetAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text")
                         .HasColumnName("column_name");
+
+                    b.Property<string>("ColumnSortOrder")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("column_sort_order");
 
                     b.Property<string>("CreatedBy")
                         .IsRequired()

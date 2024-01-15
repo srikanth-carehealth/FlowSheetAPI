@@ -22,8 +22,8 @@ namespace FlowSheetAPI.DomainModel
         public string? ColumnName { get; set; }
 
         [Required]
-        [Column("column_sort_order")]
-        public string? ColumnSortOrder { get; set; }
+        [Column("column_display_order")]
+        public int? ColumnDisplayOrder { get; set; }
 
         [Required]
         [Column("client_id")]

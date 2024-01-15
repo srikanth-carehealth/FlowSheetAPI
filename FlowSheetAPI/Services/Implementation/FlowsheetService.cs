@@ -33,14 +33,10 @@ namespace FlowSheetAPI.Services.Implementation
             var list = Enumerable.Empty<Flowsheet>();
             list = await _unitOfWork.RegisterRepository<Flowsheet>().GetAllAsync(e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in columns.Result)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-            }
+
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
-            flowSheetWrapper.FlowsheetColumns = colArr;
+            flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
             return flowSheetWrapper;
         }
@@ -52,15 +48,10 @@ namespace FlowSheetAPI.Services.Implementation
             var list = new List<Flowsheet>();
             list.Add(await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == id, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver)));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in columns.Result)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-            }
 
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
-            flowSheetWrapper.FlowsheetColumns = colArr;
+            flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
             return flowSheetWrapper;
         }
@@ -76,15 +67,10 @@ namespace FlowSheetAPI.Services.Implementation
             {
                 list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId, e => e.Doctor, e => e.SpecialityType, e => e.Approver));
                 var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-                var colArr = new List<FlowSheetColumns>();
-                foreach (var col in columns.Result)
-                {
-                    colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-                }
 
                 flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
                 flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
-                flowSheetWrapper.FlowsheetColumns = colArr;
+                flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
             }
 
             return flowSheetWrapper;
@@ -276,16 +262,11 @@ namespace FlowSheetAPI.Services.Implementation
 
             list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Doctor.DoctorId == doctor.DoctorId, e => e.Patient, ehrUserName => ehrUserName.SpecialityType, e => e.Approver));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in columns.Result)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-            }
 
             var flowsheets = list.ToList();
             flowSheetWrapper.SpecialityType = flowsheets.FirstOrDefault().SpecialityType;
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
-            flowSheetWrapper.FlowsheetColumns = colArr;
+            flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
             return flowSheetWrapper;
         }
@@ -301,15 +282,10 @@ namespace FlowSheetAPI.Services.Implementation
             if (patient == null || doctor == null) return flowSheetWrapper;
             list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.Doctor.DoctorId == doctor.DoctorId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver));
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityType.SpecialityTypeId == list.FirstOrDefault().SpecialityType.SpecialityTypeId));
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in columns.Result)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-            }
 
             flowSheetWrapper.SpecialityType = list.FirstOrDefault().SpecialityType;
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(list);
-            flowSheetWrapper.FlowsheetColumns = colArr;
+            flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
             return flowSheetWrapper;
         }
@@ -325,12 +301,6 @@ namespace FlowSheetAPI.Services.Implementation
             var flowsheets = list.ToList();
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
 
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in columns.Result)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnName, col.ColumnName.Replace(" ", "")));
-            }
-
             if (flowsheets.Count == 0)
             {
                 var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType, x => x.SpecialityType).FirstOrDefault());
@@ -343,7 +313,7 @@ namespace FlowSheetAPI.Services.Implementation
             }
 
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
-            flowSheetWrapper.FlowsheetColumns = colArr;
+            flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
             return flowSheetWrapper;
         }
@@ -522,6 +492,17 @@ namespace FlowSheetAPI.Services.Implementation
                 flowSheetlist.Add(flowsheetVM);
             }
             return flowSheetlist;
+        }
+
+        private static List<FlowSheetColumns> GenerateFlowSheetColumns(IEnumerable<FlowsheetTemplate>? templateList)
+        {
+            var colArr = new List<FlowSheetColumns>();
+            foreach (var col in templateList)
+            {
+                colArr.Add(new FlowSheetColumns(col.ColumnId, col.ColumnName, col.ColumnDisplayOrder));
+            }
+
+            return colArr;
         }
     }
 }
