@@ -14,8 +14,16 @@ namespace FlowSheetAPI.DomainModel
         public Guid FlowsheetTemplateId { get; set; }
 
         [Required]
+        [Column("column_id")]
+        public string? ColumnId { get; set; }
+
+        [Required]
         [Column("column_name")]
         public string? ColumnName { get; set; }
+
+        [Required]
+        [Column("column_sort_order")]
+        public string? ColumnSortOrder { get; set; }
 
         [Required]
         [Column("client_id")]
