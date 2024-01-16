@@ -299,19 +299,20 @@ namespace FlowSheetAPI.Services.Implementation
 
             var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityConditionType.ConditionName == conditionSpecialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver, e => e.SpecialityConditionType));
             var flowsheets = list.ToList();
-            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
 
             if (flowsheets.Count == 0)
             {
                 var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType, x => x.SpecialityType).FirstOrDefault());
                 var specialityType = specialityConditionType.SpecialityType;
                 flowSheetWrapper.SpecialityType = specialityType;
+                flowSheetWrapper.SpecialityConditionType = specialityConditionType;
             }
             else
             {
                 flowSheetWrapper.SpecialityType = flowsheets.FirstOrDefault().SpecialityType;
             }
 
+            var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
             flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
 
