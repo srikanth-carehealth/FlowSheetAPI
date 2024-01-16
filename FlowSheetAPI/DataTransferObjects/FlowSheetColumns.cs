@@ -1,18 +1,17 @@
-﻿using System.Reflection;
-
-namespace FlowSheetAPI.DataTransferObjects
+﻿namespace FlowSheetAPI.DataTransferObjects
 {
     public class FlowSheetColumns
     {
-
-        public FlowSheetColumns(string title, string field, int? order) {
-            Title = title;
-            Field = field;
-            DisplayOrder = order;
+        public FlowSheetColumns(string columnId, string columnName, int? order)
+        {
+            Key = columnId; // Key Column_Id
+            Value = columnName; // Value Column_Name
+            DisplayOrder = order; // Value Column_display_Order
         }
-        public string Title { get; set; }
 
-        public string Field { get; set; }
+        public string Key { get; set; }
+
+        public string Value { get; set; }
 
         public int? DisplayOrder { get; set; }
     }
