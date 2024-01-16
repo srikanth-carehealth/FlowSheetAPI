@@ -8,6 +8,6 @@ namespace FlowSheetAPI.DataTransferObjects
         public SpecialityConditionType SpecialityConditionType { get; set; }
         public IEnumerable<FlowSheetColumns>? FlowsheetColumns { get; set; }
         public IEnumerable<FlowSheetVM> Flowsheets { get; set; }
-        public IEnumerable<FlowsheetApprover> Approver { get; set; }
+        public IEnumerable<Approver> Approver { get; set; }
     }
 }

@@ -316,7 +316,29 @@ namespace FlowSheetAPI.Services.Implementation
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
             flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
-            flowSheetWrapper.Approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType)).Result;
+            var approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
+            
+            var approverList = new List<Approver>();
+
+            foreach (var item in approver.Result)
+            {
+                approverList.Add(new Approver
+                {
+                    FirstName = item.FirstName,
+                    MiddleName = item.MiddleName,
+                    LastName = item.LastName,
+                    Initial = item.Initial,
+                    Designation = item.Designation,
+                    Telephone = item.Telephone,
+                    Fax = item.Fax,
+                    Address = item.Address,
+                    ClientId = item.ClientId,
+                    ClientName = item.ClientName
+                });
+            }
+
+            // Add approver to the flowSheetWrapper
+            flowSheetWrapper.Approver = approverList;
 
             return flowSheetWrapper;
         }
