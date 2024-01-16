@@ -306,6 +306,7 @@ namespace FlowSheetAPI.Services.Implementation
                 var specialityType = specialityConditionType.SpecialityType;
                 flowSheetWrapper.SpecialityType = specialityType;
                 flowSheetWrapper.SpecialityConditionType = specialityConditionType;
+                flowSheetWrapper.Flowsheets = new List<FlowSheetVM>();
             }
             else
             {
@@ -315,6 +316,7 @@ namespace FlowSheetAPI.Services.Implementation
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
             flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
+            flowSheetWrapper.Approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType)).Result;
 
             return flowSheetWrapper;
         }
