@@ -2,6 +2,7 @@
 {
     public class Approver
     {
+        public Guid FlowsheetApproverId { get; set; }
         public string? FirstName { get; set; }
 
         public string? MiddleName { get; set; }

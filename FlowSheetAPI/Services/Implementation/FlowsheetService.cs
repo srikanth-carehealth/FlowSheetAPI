@@ -324,6 +324,7 @@ namespace FlowSheetAPI.Services.Implementation
             {
                 approverList.Add(new Approver
                 {
+                    FlowsheetApproverId = item.FlowsheetApproverId,
                     FirstName = item.FirstName,
                     MiddleName = item.MiddleName,
                     LastName = item.LastName,
