@@ -80,7 +80,7 @@ namespace FlowSheetAPI.Services.Implementation
         {
             var flowsheet = new Flowsheet();
 
-            if (inputModel.FlowsheetId != null)
+            if (inputModel.FlowsheetId != Guid.Empty)
             {
                 flowsheet = _unitOfWork.RegisterRepository<Flowsheet>().Get(p => p.FlowsheetId == inputModel.FlowsheetId, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver);
             }
@@ -195,38 +195,20 @@ namespace FlowSheetAPI.Services.Implementation
                     Doctor = flowsheet.Doctor,
                 });
 
-                // Add Flowsheet approver to the database
-                //if (inputModel.Approver != null)
-                //{
-                //    flowsheet.Approver = new FlowsheetApprover
-                //    {
-                //        FirstName = inputModel.Approver.FirstName,
-                //        MiddleName = inputModel.Approver.MiddleName,
-                //        LastName = inputModel.Approver.LastName,
-                //        Initial = inputModel.Approver.Initial,
-                //        Designation = inputModel.Approver.Designation,
-                //        Telephone = inputModel.Approver.Telephone,
-                //        Fax = inputModel.Approver.Fax,
-                //        Address = inputModel.Approver.Address,
-                //        IsActive = true,
-                //        ClientId = inputModel.Approver.ClientId,
-                //        ClientName = inputModel.Approver.ClientName,
-                //        CreatedBy = loggedInUser,
-                //        CreatedDate = DateTime.UtcNow,
-                //        UpdatedBy = loggedInUser,
-                //        UpdatedDate = DateTime.UtcNow,
-                //        SpecialityType = flowsheet.SpecialityType,
-                //        SpecialityConditionType = flowsheet.SpecialityConditionType
-                //    };
-                //    _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(flowsheet.Approver);
-
-                //    _unitOfWork.RegisterRepository<FlowsheetApprovalHistory>().UpsertAsync(new FlowsheetApprovalHistory
-                //    {
-                //        FlowsheetApprovalHistoryId = Guid.NewGuid(),
-                //        Flowsheet = flowsheet,
-                //        FlowsheetApprover = flowsheet.Approver
-                //    });
-                //}
+                if (inputModel.FlowsheetId != Guid.Empty)
+                {
+                    // Add Flowsheet approver to the database
+                    if (inputModel.ApproverId != Guid.Empty)
+                    {
+                        var approver = _unitOfWork.RegisterRepository<FlowsheetApprover>().GetByIdAsync(inputModel.ApproverId).Result;
+                        _unitOfWork.RegisterRepository<FlowsheetApprovalHistory>().UpsertAsync(new FlowsheetApprovalHistory
+                        {
+                            FlowsheetApprovalHistoryId = Guid.NewGuid(),
+                            Flowsheet = flowsheet,
+                            FlowsheetApprover = approver
+                        });
+                    }
+                }
 
                 // Save the changes to the database.
                 _unitOfWork.SaveChanges();
@@ -317,7 +299,7 @@ namespace FlowSheetAPI.Services.Implementation
             flowSheetWrapper.Flowsheets = ConvertFlowsheetToFlowSheetDM(flowsheets);
             flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
             var approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
-            
+
             var approverList = new List<Approver>();
 
             foreach (var item in approver.Result)
