@@ -196,37 +196,37 @@ namespace FlowSheetAPI.Services.Implementation
                 });
 
                 // Add Flowsheet approver to the database
-                if (inputModel.Approver != null)
-                {
-                    flowsheet.Approver = new FlowsheetApprover
-                    {
-                        FirstName = inputModel.Approver.FirstName,
-                        MiddleName = inputModel.Approver.MiddleName,
-                        LastName = inputModel.Approver.LastName,
-                        Initial = inputModel.Approver.Initial,
-                        Designation = inputModel.Approver.Designation,
-                        Telephone = inputModel.Approver.Telephone,
-                        Fax = inputModel.Approver.Fax,
-                        Address = inputModel.Approver.Address,
-                        IsActive = true,
-                        ClientId = inputModel.Approver.ClientId,
-                        ClientName = inputModel.Approver.ClientName,
-                        CreatedBy = loggedInUser,
-                        CreatedDate = DateTime.UtcNow,
-                        UpdatedBy = loggedInUser,
-                        UpdatedDate = DateTime.UtcNow,
-                        SpecialityType = flowsheet.SpecialityType,
-                        SpecialityConditionType = flowsheet.SpecialityConditionType
-                    };
-                    _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(flowsheet.Approver);
+                //if (inputModel.Approver != null)
+                //{
+                //    flowsheet.Approver = new FlowsheetApprover
+                //    {
+                //        FirstName = inputModel.Approver.FirstName,
+                //        MiddleName = inputModel.Approver.MiddleName,
+                //        LastName = inputModel.Approver.LastName,
+                //        Initial = inputModel.Approver.Initial,
+                //        Designation = inputModel.Approver.Designation,
+                //        Telephone = inputModel.Approver.Telephone,
+                //        Fax = inputModel.Approver.Fax,
+                //        Address = inputModel.Approver.Address,
+                //        IsActive = true,
+                //        ClientId = inputModel.Approver.ClientId,
+                //        ClientName = inputModel.Approver.ClientName,
+                //        CreatedBy = loggedInUser,
+                //        CreatedDate = DateTime.UtcNow,
+                //        UpdatedBy = loggedInUser,
+                //        UpdatedDate = DateTime.UtcNow,
+                //        SpecialityType = flowsheet.SpecialityType,
+                //        SpecialityConditionType = flowsheet.SpecialityConditionType
+                //    };
+                //    _unitOfWork.RegisterRepository<FlowsheetApprover>().UpsertAsync(flowsheet.Approver);
 
-                    _unitOfWork.RegisterRepository<FlowsheetApprovalHistory>().UpsertAsync(new FlowsheetApprovalHistory
-                    {
-                        FlowsheetApprovalHistoryId = Guid.NewGuid(),
-                        Flowsheet = flowsheet,
-                        FlowsheetApprover = flowsheet.Approver
-                    });
-                }
+                //    _unitOfWork.RegisterRepository<FlowsheetApprovalHistory>().UpsertAsync(new FlowsheetApprovalHistory
+                //    {
+                //        FlowsheetApprovalHistoryId = Guid.NewGuid(),
+                //        Flowsheet = flowsheet,
+                //        FlowsheetApprover = flowsheet.Approver
+                //    });
+                //}
 
                 // Save the changes to the database.
                 _unitOfWork.SaveChanges();

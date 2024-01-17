@@ -155,7 +155,7 @@ namespace FlowSheetAPI.Controllers
                     return BadRequest("Invalid data");
                 }
 
-                //Insert a record into the Flowsheet history table
+                //Insert a record into the Flowsheet table
                 var response = _flowsheetService.InsertFlowSheet(flowsheet);
 
                 return Ok(response);
