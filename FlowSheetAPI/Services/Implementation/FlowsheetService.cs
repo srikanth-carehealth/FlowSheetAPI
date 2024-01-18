@@ -282,17 +282,14 @@ namespace FlowSheetAPI.Services.Implementation
             var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityConditionType.ConditionName == conditionSpecialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver, e => e.SpecialityConditionType));
             var flowsheets = list.ToList();
 
+            var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType).FirstOrDefault());
+            var specialityType = specialityConditionType.SpecialityType;
+            flowSheetWrapper.SpecialityType = specialityType;
+            flowSheetWrapper.SpecialityConditionType = specialityConditionType;
+
             if (flowsheets.Count == 0)
             {
-                var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType, x => x.SpecialityType).FirstOrDefault());
-                var specialityType = specialityConditionType.SpecialityType;
-                flowSheetWrapper.SpecialityType = specialityType;
-                flowSheetWrapper.SpecialityConditionType = specialityConditionType;
                 flowSheetWrapper.Flowsheets = new List<FlowSheetVM>();
-            }
-            else
-            {
-                flowSheetWrapper.SpecialityType = flowsheets.FirstOrDefault().SpecialityType;
             }
 
             var columns = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetTemplate>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
