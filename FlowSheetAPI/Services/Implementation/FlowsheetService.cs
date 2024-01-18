@@ -483,7 +483,7 @@ namespace FlowSheetAPI.Services.Implementation
                     UpdatedDate = item.UpdatedDate,
                     Patient = item.Patient,
                     Doctor = item.Doctor,
-                    //SpecialityType = item.SpecialityType,
+                    SpecialityType = item.SpecialityType,
                     Approver = item.Approver
                 };
 
