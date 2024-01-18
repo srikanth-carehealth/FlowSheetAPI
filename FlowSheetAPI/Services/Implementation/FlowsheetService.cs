@@ -297,11 +297,7 @@ namespace FlowSheetAPI.Services.Implementation
             flowSheetWrapper.FlowsheetColumns = GenerateFlowSheetColumns(columns.Result);
             var approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
 
-            var approverList = new List<Approver>();
-
-            foreach (var item in approver.Result)
-            {
-                approverList.Add(new Approver
+            var approverList = approver.Result.Select(item => new Approver
                 {
                     FlowsheetApproverId = item.FlowsheetApproverId,
                     FirstName = item.FirstName,
@@ -314,8 +310,8 @@ namespace FlowSheetAPI.Services.Implementation
                     Address = item.Address,
                     ClientId = item.ClientId,
                     ClientName = item.ClientName
-                });
-            }
+                })
+                .ToList();
 
             // Add approver to the flowSheetWrapper
             flowSheetWrapper.Approver = approverList;
@@ -473,11 +469,12 @@ namespace FlowSheetAPI.Services.Implementation
         private static IEnumerable<FlowSheetVM> ConvertFlowsheetToFlowSheetDM(IEnumerable<Flowsheet> list)
         {
             var flowSheetlist = new List<FlowSheetVM>();
+            var flowsheets = list.ToList();
 
-            if (!list.Any()) return flowSheetlist;
-            foreach (var item in list)
+            if (!flowsheets.Any()) return flowSheetlist;
+            foreach (var item in flowsheets)
             {
-                var flowsheetVM = new FlowSheetVM
+                var flowsheetVm = new FlowSheetVM
                 {
                     FlowsheetId = item.FlowsheetId,
                     CreatedBy = item.CreatedBy,
@@ -486,28 +483,22 @@ namespace FlowSheetAPI.Services.Implementation
                     UpdatedDate = item.UpdatedDate,
                     Patient = item.Patient,
                     Doctor = item.Doctor,
-                    SpecialityType = item.SpecialityType,
+                    //SpecialityType = item.SpecialityType,
                     Approver = item.Approver
                 };
 
                 if (item.flowsheetNote != null)
                 {
-                    flowsheetVM.flowsheetNote = JsonConvert.DeserializeObject<FlowSheetNote>(item.flowsheetNote);
+                    flowsheetVm.flowsheetNote = JsonConvert.DeserializeObject<FlowSheetNote>(item.flowsheetNote);
                 }
-                flowSheetlist.Add(flowsheetVM);
+                flowSheetlist.Add(flowsheetVm);
             }
             return flowSheetlist;
         }
 
-        private static List<FlowSheetColumns> GenerateFlowSheetColumns(IEnumerable<FlowsheetTemplate>? templateList)
+        private static IEnumerable<FlowSheetColumns> GenerateFlowSheetColumns(IEnumerable<FlowsheetTemplate>? templateList)
         {
-            var colArr = new List<FlowSheetColumns>();
-            foreach (var col in templateList)
-            {
-                colArr.Add(new FlowSheetColumns(col.ColumnId, col.ColumnName, col.ColumnDisplayOrder));
-            }
-
-            return colArr;
+            return templateList.Select(col => new FlowSheetColumns(col.ColumnId, col.ColumnName, col.ColumnDisplayOrder)).ToList();
         }
     }
 }

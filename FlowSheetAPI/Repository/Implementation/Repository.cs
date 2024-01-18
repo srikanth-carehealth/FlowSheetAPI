@@ -39,7 +39,9 @@ namespace FlowSheetAPI.Repository.Implementation
             {
                 query = query.Include(includeProperty);
             }
-            return await Task.FromResult(query.ToList());
+
+            // Using ToListAsync for true asynchronous operation.
+            return await query.ToListAsync();
         }
 
         public async Task UpsertAsync(TEntity entity)

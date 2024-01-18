@@ -9,7 +9,7 @@ namespace FlowSheetAPI.DataTransferObjects
         public Patient Patient { get; set; }
         public Doctor Doctor { get; set; }
         public SpecialityType SpecialityType { get; set; }
-        public SpecialityConditionType SpecialityConditionType { get; set; }
+        //public SpecialityConditionType SpecialityConditionType { get; set; }
         public FlowsheetApprover? Approver { get; set; }
         public string CreatedBy { get; set; }
         public string UpdatedBy { get; set; }
