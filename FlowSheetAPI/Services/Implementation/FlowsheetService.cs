@@ -282,7 +282,7 @@ namespace FlowSheetAPI.Services.Implementation
             var list = await Task.FromResult(_unitOfWork.RegisterRepository<Flowsheet>().GetAll(w => w.Patient.PatientId == patient.PatientId && w.SpecialityConditionType.ConditionName == conditionSpecialityType, e => e.Doctor, e => e.Patient, e => e.SpecialityType, e => e.Approver, e => e.SpecialityConditionType));
             var flowsheets = list.ToList();
 
-            var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType).FirstOrDefault());
+            var specialityConditionType = await Task.FromResult(_unitOfWork.RegisterRepository<SpecialityConditionType>().GetAll(x => x.ConditionName == conditionSpecialityType, i => i.SpecialityType).FirstOrDefault());
             var specialityType = specialityConditionType.SpecialityType;
             flowSheetWrapper.SpecialityType = specialityType;
             flowSheetWrapper.SpecialityConditionType = specialityConditionType;
@@ -298,19 +298,19 @@ namespace FlowSheetAPI.Services.Implementation
             var approver = await Task.FromResult(_unitOfWork.RegisterRepository<FlowsheetApprover>().Where(x => x.SpecialityConditionType.ConditionName == conditionSpecialityType));
 
             var approverList = approver.Result.Select(item => new Approver
-                {
-                    FlowsheetApproverId = item.FlowsheetApproverId,
-                    FirstName = item.FirstName,
-                    MiddleName = item.MiddleName,
-                    LastName = item.LastName,
-                    Initial = item.Initial,
-                    Designation = item.Designation,
-                    Telephone = item.Telephone,
-                    Fax = item.Fax,
-                    Address = item.Address,
-                    ClientId = item.ClientId,
-                    ClientName = item.ClientName
-                })
+            {
+                FlowsheetApproverId = item.FlowsheetApproverId,
+                FirstName = item.FirstName,
+                MiddleName = item.MiddleName,
+                LastName = item.LastName,
+                Initial = item.Initial,
+                Designation = item.Designation,
+                Telephone = item.Telephone,
+                Fax = item.Fax,
+                Address = item.Address,
+                ClientId = item.ClientId,
+                ClientName = item.ClientName
+            })
                 .ToList();
 
             // Add approver to the flowSheetWrapper
