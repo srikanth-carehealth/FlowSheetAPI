@@ -218,6 +218,7 @@ namespace FlowSheetAPI.Services.Implementation
 
                 response.Success = true;
                 response.Message = "Data successfully saved.";
+                response.Cachekey = string.Concat("flowSheetWrapper", flowsheet.SpecialityConditionType.ConditionName.Replace(" ", ""), flowsheet.Patient.PatientId.ToString());                _logger.LogInformation("Flowsheet data successfully saved. " + flowsheet.FlowsheetId + ". ");
                 _logger.LogInformation("Flowsheet data successfully saved. " + flowsheet.FlowsheetId + ". ");
             }
             catch (Exception ex)

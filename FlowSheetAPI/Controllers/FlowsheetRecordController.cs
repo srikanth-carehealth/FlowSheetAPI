@@ -2,6 +2,7 @@
 using FlowSheetAPI.DomainModel;
 using FlowSheetAPI.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FlowSheetAPI.Controllers
 {
@@ -12,11 +13,14 @@ namespace FlowSheetAPI.Controllers
     {
         private readonly IFlowsheetService _flowsheetService;
         private readonly ILogger<FlowsheetRecordController> _logger;
+        private IMemoryCache _cache;
+        private string flowSheetWrapperCacheKey = "flowSheetWrapper";
 
-        public FlowsheetRecordController(IFlowsheetService endocrinologyService, ILogger<FlowsheetRecordController> logger)
+        public FlowsheetRecordController(IFlowsheetService endocrinologyService, ILogger<FlowsheetRecordController> logger, IMemoryCache cache)
         {
             _flowsheetService = endocrinologyService;
             _logger = logger;
+            _cache = cache ?? throw new ArgumentNullException(nameof(cache));
         }
 
         [HttpGet]
@@ -107,16 +111,30 @@ namespace FlowSheetAPI.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult GetBySpecialityAndPatient(string conditionSpecialityType, int ehrPatientId)
         {
-            try
+            flowSheetWrapperCacheKey = string.Concat("flowSheetWrapper", conditionSpecialityType.Replace(" ",""), ehrPatientId.ToString());
+            if (_cache.TryGetValue(flowSheetWrapperCacheKey, out FlowSheetWrapper? flowsheets))
             {
-                var flowsheets = _flowsheetService.GetBySpecialityConditionAndPatient(conditionSpecialityType, ehrPatientId);
-                return Ok(flowsheets);
-            }
-            catch (Exception ex)
+                _logger.Log(LogLevel.Information, "flowSheetWrapper list found in cache.");
+            } else
             {
-                _logger.LogError("Error occurred while fetching flowsheet by patient and doctor" + ex);
-                return StatusCode(StatusCodes.Status500InternalServerError);
+                try
+                {
+                    flowsheets = _flowsheetService.GetBySpecialityConditionAndPatient(conditionSpecialityType, ehrPatientId).Result;
+
+                    var cacheEntryOptions = new MemoryCacheEntryOptions()
+                    .SetSlidingExpiration(TimeSpan.FromSeconds(3600))
+                    .SetAbsoluteExpiration(TimeSpan.FromSeconds(3600))
+                    .SetPriority(CacheItemPriority.Normal);
+                    //.SetSize(1024);
+                    _cache.Set(flowSheetWrapperCacheKey, flowsheets, cacheEntryOptions);
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError("Error occurred while fetching flowsheet by patient and doctor" + ex);
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
             }
+            return Ok(flowsheets);
         }
 
         [HttpPost]
@@ -157,7 +175,8 @@ namespace FlowSheetAPI.Controllers
 
                 //Insert a record into the Flowsheet table
                 var response = _flowsheetService.InsertFlowSheet(flowsheet);
-
+                //remove the cached entry
+                _cache.Remove(response.Cachekey);
                 return Ok(response);
             }
             catch (Exception ex)
